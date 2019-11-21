@@ -2,9 +2,9 @@ package top.youlanqiang.mixorm.mate;
 
 import java.util.HashMap;
 
-class EntityMate {
+class EntityMate<T> {
 
-    private Class clazz;
+    private Class<T> clazz;
 
     private String tableName;
 
@@ -15,11 +15,11 @@ class EntityMate {
     private HashMap<String, EntityField> fields;
 
 
-    Class getClazz() {
+    Class<T> getClazz() {
         return clazz;
     }
 
-    void setClazz(Class clazz) {
+    void setClazz(Class<T> clazz) {
         this.clazz = clazz;
     }
 
