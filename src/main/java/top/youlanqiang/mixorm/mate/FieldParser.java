@@ -18,6 +18,7 @@ abstract class FieldParser {
             throw new NullPointerException("Field is null!");
         }
         loadIsId(field, result);
+        loadFieldName(field, result);
         loadColumnName(field, result);
         loadColumnType(field, result);
         loadSetMethod(field, result);
@@ -25,6 +26,8 @@ abstract class FieldParser {
     }
 
     abstract void loadIsId(Field field, EntityField result);
+
+    abstract void loadFieldName(Field field, EntityField result);
 
     abstract void loadColumnName(Field field, EntityField result);
 

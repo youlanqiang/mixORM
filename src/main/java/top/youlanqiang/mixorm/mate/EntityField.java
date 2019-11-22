@@ -1,10 +1,16 @@
 package top.youlanqiang.mixorm.mate;
 
+import top.youlanqiang.mixorm.annotation.IdType;
+
 class EntityField {
 
     private boolean isId;
 
     private String columnName;
+
+    private String fieldName;
+
+    private IdType idType;
 
     private Class columnType;
 
@@ -50,5 +56,21 @@ class EntityField {
 
     void setGetMethod(String getMethod) {
         this.getMethod = getMethod;
+    }
+
+    String getFieldName() {
+        return fieldName;
+    }
+
+    void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
+    }
+
+    IdType getIdType() {
+        return idType;
+    }
+
+    void setIdType(IdType idType) {
+        this.idType = idType;
     }
 }
