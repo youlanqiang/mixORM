@@ -1,9 +1,9 @@
 package top.youlanqiang.mixorm.mate;
 
-import java.util.HashMap;
+
 import java.util.Map;
 
-class EntityMate<T> {
+public class EntityMate<T> {
 
     private Class<T> clazz;
 

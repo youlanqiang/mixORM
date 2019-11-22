@@ -2,7 +2,7 @@ package top.youlanqiang.mixorm.mate;
 
 import top.youlanqiang.mixorm.annotation.IdType;
 
-class EntityField {
+public class EntityField {
 
     private boolean isId;
 
