@@ -1,6 +1,7 @@
 package top.youlanqiang.mixorm.mate;
 
 import java.util.HashMap;
+import java.util.Map;
 
 class EntityMate<T> {
 
@@ -10,9 +11,10 @@ class EntityMate<T> {
 
     private boolean hasId;
 
-    private Class idClazz;
+    private EntityField idEntity;
 
-    private HashMap<String, EntityField> fields;
+
+    private Map<String, EntityField> fields;
 
 
     Class<T> getClazz() {
@@ -39,19 +41,21 @@ class EntityMate<T> {
         this.hasId = hasId;
     }
 
-    Class getIdClazz() {
-        return idClazz;
-    }
-
-    void setIdClazz(Class idClazz) {
-        this.idClazz = idClazz;
-    }
-
-    HashMap<String, EntityField> getFields() {
+    Map<String, EntityField> getFields() {
         return fields;
     }
 
-    void setFields(HashMap<String, EntityField> fields) {
+    void setFields(Map<String, EntityField> fields) {
         this.fields = fields;
     }
+
+    EntityField getIdEntity() {
+        return idEntity;
+    }
+
+    void setIdEntity(EntityField idEntity) {
+        this.idEntity = idEntity;
+    }
 }
+
+

@@ -16,7 +16,7 @@ public @interface DbId {
     /**
      *  默认自增长
      */
-    IdType type() default IdType.INCREMENT;
+    IdType type() default IdType.INPUT;
 
     String value();
 }

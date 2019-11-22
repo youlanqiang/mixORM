@@ -7,19 +7,19 @@ abstract class  ClassParser<T> {
 
     private EntityMate result;
 
-    public ClassParser(Class<T> clazz){
+    ClassParser(Class<T> clazz){
         this.clazz = clazz;
+        this.result = new EntityMate();
     }
 
     private void parse(){
         if(clazz == null){
             throw new NullPointerException("Class is null!");
         }
+        loadFields(clazz, result);
         loadClass(clazz, result);
         loadTableName(clazz, result);
         loadHasId(clazz, result);
-        loadIdClass(clazz, result);
-        loadFields(clazz, result);
     }
 
     abstract void loadClass(Class<T> clazz, EntityMate mate);
@@ -28,7 +28,6 @@ abstract class  ClassParser<T> {
 
     abstract void loadHasId(Class<T> clazz, EntityMate mate);
 
-    abstract void loadIdClass(Class<T> clazz, EntityMate mate);
 
     abstract void loadFields(Class<T> clazz, EntityMate mate);
 

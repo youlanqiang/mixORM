@@ -9,8 +9,9 @@ abstract class FieldParser {
 
     private EntityField result;
 
-    public FieldParser(Field field){
+    FieldParser(Field field){
         this.field = field;
+        this.result = new EntityField();
     }
 
     private void parse(){
