@@ -11,4 +11,9 @@ public interface DeleteSqlGenerator extends SqlGenerator{
         return new MysqlDeleteSqlGenerator();
     }
 
+
+    DeleteSqlGenerator deleteForm(String tableName);
+
+    DeleteSqlGenerator where(ConditionSqlGenerator conditionSqlGenerator);
+
 }

@@ -4,6 +4,7 @@ package top.youlanqiang.mixorm.sql;
 import top.youlanqiang.mixorm.sql.mysql.MysqlConditionSqlGenerator;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface ConditionSqlGenerator extends SqlGenerator {
 
@@ -65,4 +66,6 @@ public interface ConditionSqlGenerator extends SqlGenerator {
     ConditionSqlGenerator orderByDesc(String... columns);
 
    ConditionSqlGenerator having(String sqlHaving);
+
+    List<Object> getParams();
 }

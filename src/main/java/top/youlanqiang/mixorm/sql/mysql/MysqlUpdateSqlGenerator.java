@@ -1,11 +1,26 @@
 package top.youlanqiang.mixorm.sql.mysql;
 
 
+import top.youlanqiang.mixorm.sql.ConditionSqlGenerator;
 import top.youlanqiang.mixorm.sql.UpdateSqlGenerator;
 
-import java.util.List;
 
 public class MysqlUpdateSqlGenerator implements UpdateSqlGenerator {
+
+    @Override
+    public UpdateSqlGenerator update(String tableName) {
+        return null;
+    }
+
+    @Override
+    public UpdateSqlGenerator set(String column, Object value) {
+        return null;
+    }
+
+    @Override
+    public UpdateSqlGenerator where(ConditionSqlGenerator conditionSqlGenerator) {
+        return null;
+    }
 
     @Override
     public String getString() {
@@ -17,8 +32,5 @@ public class MysqlUpdateSqlGenerator implements UpdateSqlGenerator {
         return null;
     }
 
-    @Override
-    public List<Object> getParams() {
-        return null;
-    }
+
 }

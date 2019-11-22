@@ -10,4 +10,10 @@ public interface UpdateSqlGenerator extends SqlGenerator {
     default UpdateSqlGenerator create(){
         return new MysqlUpdateSqlGenerator();
     }
+
+    UpdateSqlGenerator update(String tableName);
+
+    UpdateSqlGenerator set(String column, Object value);
+
+    UpdateSqlGenerator where(ConditionSqlGenerator conditionSqlGenerator);
 }

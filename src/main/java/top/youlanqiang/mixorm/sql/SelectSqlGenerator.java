@@ -11,4 +11,11 @@ public interface SelectSqlGenerator extends SqlGenerator {
     default SelectSqlGenerator create(){
         return new MysqlSelectSqlGenerator();
     }
+
+    SelectSqlGenerator select(String... columns);
+
+    SelectSqlGenerator from(String tableName);
+
+    SelectSqlGenerator where(ConditionSqlGenerator conditionSqlGenerator);
+
 }
