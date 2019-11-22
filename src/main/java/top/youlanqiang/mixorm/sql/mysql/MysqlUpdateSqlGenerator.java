@@ -1,10 +1,11 @@
 package top.youlanqiang.mixorm.sql.mysql;
 
-import top.youlanqiang.mixorm.sql.SqlGenerator;
+
+import top.youlanqiang.mixorm.sql.UpdateSqlGenerator;
 
 import java.util.List;
 
-public class MysqlUpdateSqlGenerator implements SqlGenerator {
+public class MysqlUpdateSqlGenerator implements UpdateSqlGenerator {
 
     @Override
     public String getString() {

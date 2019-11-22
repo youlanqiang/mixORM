@@ -1,10 +1,11 @@
 package top.youlanqiang.mixorm.sql.mysql;
 
-import top.youlanqiang.mixorm.sql.SqlGenerator;
+import top.youlanqiang.mixorm.sql.DeleteSqlGenerator;
+
 
 import java.util.List;
 
-public class MysqlDeleteSqlGenerator implements SqlGenerator {
+public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 
     @Override
     public String getString() {

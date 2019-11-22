@@ -1,10 +1,10 @@
 package top.youlanqiang.mixorm.sql.mysql;
 
-import top.youlanqiang.mixorm.sql.SqlGenerator;
+import top.youlanqiang.mixorm.sql.SelectSqlGenerator;
 
 import java.util.List;
 
-public class MysqlSelectSqlGenerator implements SqlGenerator {
+public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 
     @Override
     public String getString() {
