@@ -1,0 +1,4 @@
+# mixORM
+mixORM是为了解决我在工作中遇到问题所编写的一种无规范，0配置可与其他ORM混合使用而不破坏代码结构的ORM框架。
+类似于Apache DBUtils,Spring JDBCTemplate。但在API设计上借鉴了MyBatis-Plus的BaseMapper。使其具备开箱即用的特性。
+
