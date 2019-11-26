@@ -22,11 +22,11 @@ public class EntityField {
         return isId;
     }
 
-    public void setId(boolean id) {
+    void setId(boolean id) {
         isId = id;
     }
 
-    String getColumnName() {
+    public String getColumnName() {
         return columnName;
     }
 
@@ -34,7 +34,7 @@ public class EntityField {
         this.columnName = columnName;
     }
 
-    Class getColumnType() {
+    public Class getColumnType() {
         return columnType;
     }
 
@@ -42,7 +42,7 @@ public class EntityField {
         this.columnType = columnType;
     }
 
-    String getSetMethod() {
+    public String getSetMethod() {
         return setMethod;
     }
 
@@ -50,7 +50,7 @@ public class EntityField {
         this.setMethod = setMethod;
     }
 
-    String getGetMethod() {
+    public String getGetMethod() {
         return getMethod;
     }
 
@@ -58,7 +58,7 @@ public class EntityField {
         this.getMethod = getMethod;
     }
 
-    String getFieldName() {
+    public String getFieldName() {
         return fieldName;
     }
 
@@ -66,7 +66,7 @@ public class EntityField {
         this.fieldName = fieldName;
     }
 
-    IdType getIdType() {
+    public IdType getIdType() {
         return idType;
     }
 

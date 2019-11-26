@@ -260,6 +260,6 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
 
     @Override
     public List<Object> getParams() {
-        return null;
+        return params;
     }
 }

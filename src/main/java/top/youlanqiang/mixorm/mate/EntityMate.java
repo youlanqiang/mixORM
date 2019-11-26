@@ -17,7 +17,7 @@ public class EntityMate<T> {
     private Map<String, EntityField> fields;
 
 
-    Class<T> getClazz() {
+    public Class<T> getClazz() {
         return clazz;
     }
 
@@ -25,7 +25,7 @@ public class EntityMate<T> {
         this.clazz = clazz;
     }
 
-    String getTableName() {
+    public String getTableName() {
         return tableName;
     }
 
@@ -33,7 +33,7 @@ public class EntityMate<T> {
         this.tableName = tableName;
     }
 
-    boolean isHasId() {
+    public boolean isHasId() {
         return hasId;
     }
 
@@ -41,7 +41,7 @@ public class EntityMate<T> {
         this.hasId = hasId;
     }
 
-    Map<String, EntityField> getFields() {
+    public Map<String, EntityField> getFields() {
         return fields;
     }
 
@@ -49,7 +49,7 @@ public class EntityMate<T> {
         this.fields = fields;
     }
 
-    EntityField getIdEntity() {
+    public EntityField getIdEntity() {
         return idEntity;
     }
 
