@@ -2,11 +2,14 @@ package top.youlanqiang.mixorm.domain;
 
 import top.youlanqiang.mixorm.sql.ConditionSqlGenerator;
 
+import java.sql.Connection;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 public interface DataEntity<T> {
+
+    void use(Connection connection);
 
     /**
      * 插入一条记录
