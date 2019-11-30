@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface DataEntity<T> {
 
-    void use(Connection connection);
+    DataEntity<T> use(Connection connection);
 
     /**
      * 插入一条记录

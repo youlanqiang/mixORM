@@ -1,4 +1,4 @@
-package top.youlanqiang.mixorm.mapper;
+package top.youlanqiang.mixorm;
 
 
 import top.youlanqiang.mixorm.mate.EntityField;
