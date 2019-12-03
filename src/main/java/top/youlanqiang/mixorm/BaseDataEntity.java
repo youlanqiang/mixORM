@@ -5,6 +5,8 @@ import top.youlanqiang.mixorm.domain.PageEntity;
 import top.youlanqiang.mixorm.mate.EntityMate;
 import top.youlanqiang.mixorm.mate.EntityMateContainer;
 import top.youlanqiang.mixorm.sql.ConditionSqlGenerator;
+import top.youlanqiang.mixorm.sql.InsertSqlGenerator;
+
 
 import java.sql.Connection;
 import java.util.Collection;
@@ -13,24 +15,28 @@ import java.util.Map;
 
 class BaseDataEntity <T>  implements DataEntity<T> {
 
-    private QueryMapper<T> queryMapper;
+    private final QueryMapper<T> queryMapper;
+
+    private final EntityMate<T> entityMate;
 
     private Connection connection;
 
     public BaseDataEntity(Class<T> clazz){
         EntityMate<T> mate = EntityMateContainer.getInstance().get(clazz);
         this.queryMapper = new QueryMapper<>(mate);
+        this.entityMate = queryMapper.getMate();
     }
 
     @Override
     public DataEntity<T> use(Connection connection){
         this.connection = connection;
         return this;
+
+
     }
 
     @Override
     public int insert(T entity) {
-        
         return 0;
     }
 

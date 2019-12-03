@@ -15,7 +15,7 @@ import java.util.Map;
 public class QueryMapper<T> {
 
 
-    private EntityMate<T> mate;
+    private final EntityMate<T> mate;
 
 
     public QueryMapper(EntityMate<T> mate) {
@@ -73,6 +73,10 @@ public class QueryMapper<T> {
 
     Integer executeToUpdate(Connection conn, String sql, List<Object> param) {
         return null;
+    }
+
+    public EntityMate<T> getMate() {
+        return mate;
     }
 
     public void close(Connection conn, Statement state, ResultSet rs) {

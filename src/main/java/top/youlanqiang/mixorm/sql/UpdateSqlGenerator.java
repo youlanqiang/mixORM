@@ -7,7 +7,7 @@ public interface UpdateSqlGenerator extends SqlGenerator {
     /**
      * @return 默认使用MysqlUpdateSqlGenerator
      */
-    default UpdateSqlGenerator create(){
+    static UpdateSqlGenerator create(){
         return new MysqlUpdateSqlGenerator();
     }
 

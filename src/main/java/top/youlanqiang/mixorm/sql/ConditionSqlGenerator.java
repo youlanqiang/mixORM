@@ -11,7 +11,7 @@ public interface ConditionSqlGenerator extends SqlGenerator {
     /**
      * @return 返回对应数据库的SqlGenerator,默认为mysql
      */
-    default ConditionSqlGenerator create() {
+    static ConditionSqlGenerator create() {
         return new MysqlConditionSqlGenerator();
     }
 

@@ -9,7 +9,7 @@ public interface InsertSqlGenerator extends SqlGenerator {
     /**
      * @return 默认使用MysqlInsertSqlGenerator
      */
-    default InsertSqlGenerator create(){
+    static InsertSqlGenerator create(){
         return new MysqlInsertSqlGenerator();
     }
 

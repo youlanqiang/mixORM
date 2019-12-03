@@ -7,7 +7,7 @@ public interface DeleteSqlGenerator extends SqlGenerator{
     /**
      * @return 默认使用MysqlDeleteSqlGenerator
      */
-    default DeleteSqlGenerator create(){
+    static DeleteSqlGenerator create(){
         return new MysqlDeleteSqlGenerator();
     }
 

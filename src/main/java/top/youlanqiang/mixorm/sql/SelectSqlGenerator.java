@@ -8,7 +8,7 @@ public interface SelectSqlGenerator extends SqlGenerator {
     /**
      * @return 默认使用MysqlSelectSqlGenerator
      */
-    default SelectSqlGenerator create(){
+    static SelectSqlGenerator create(){
         return new MysqlSelectSqlGenerator();
     }
 
