@@ -5,10 +5,11 @@ import top.youlanqiang.mixorm.domain.PageEntity;
 import top.youlanqiang.mixorm.mate.EntityMate;
 import top.youlanqiang.mixorm.mate.EntityMateContainer;
 import top.youlanqiang.mixorm.sql.ConditionSqlGenerator;
-import top.youlanqiang.mixorm.sql.InsertSqlGenerator;
 
 
+import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,8 @@ class BaseDataEntity <T>  implements DataEntity<T> {
 
     private Connection connection;
 
+    private DataSource dataSource;
+
     public BaseDataEntity(Class<T> clazz){
         EntityMate<T> mate = EntityMateContainer.getInstance().get(clazz);
         this.queryMapper = new QueryMapper<>(mate);
@@ -28,11 +31,16 @@ class BaseDataEntity <T>  implements DataEntity<T> {
     }
 
     @Override
+    public DataEntity<T> source(DataSource dataSource){
+        this.dataSource = dataSource;
+        return this;
+    }
+
+
+    @Override
     public DataEntity<T> use(Connection connection){
         this.connection = connection;
         return this;
-
-
     }
 
     @Override
@@ -105,4 +113,18 @@ class BaseDataEntity <T>  implements DataEntity<T> {
         return null;
     }
 
+
+    private Connection getConnection() {
+        if(connection != null){
+            return connection;
+        }
+        if(dataSource != null){
+            try {
+                return dataSource.getConnection();
+            } catch (SQLException e) {
+                throw new RuntimeException("DB Connection has had Exception");
+            }
+        }
+        throw new RuntimeException("DB Connection has had Exception");
+    }
 }

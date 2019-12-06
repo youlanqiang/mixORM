@@ -2,6 +2,7 @@ package top.youlanqiang.mixorm.domain;
 
 import top.youlanqiang.mixorm.sql.ConditionSqlGenerator;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.Collection;
 import java.util.List;
@@ -9,6 +10,19 @@ import java.util.Map;
 
 public interface DataEntity<T> {
 
+    /**
+     * 使用一个数据源
+     * @param dataSource 数据源
+     * @return dataEntity
+     */
+    DataEntity<T> source(DataSource dataSource);
+
+    /**
+     * 单独使用一个数据库连接，在使用完后续方法后
+     * 该连接会自动关闭
+     * @param connection 一个连接
+     * @return dataEntity对象
+     */
     DataEntity<T> use(Connection connection);
 
     /**
