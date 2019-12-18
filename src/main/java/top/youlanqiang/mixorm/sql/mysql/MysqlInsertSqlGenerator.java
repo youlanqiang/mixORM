@@ -1,41 +1,74 @@
 package top.youlanqiang.mixorm.sql.mysql;
 
 import top.youlanqiang.mixorm.sql.InsertSqlGenerator;
+import top.youlanqiang.mixorm.toolkit.StringUtils;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
 
+    private StringBuilder sql;
+
+    private List<List<Object>> params;
+
+
+    public MysqlInsertSqlGenerator() {
+        this.sql = new StringBuilder();
+        this.params = new ArrayList<>();
+    }
+
     @Override
     public InsertSqlGenerator insertInto(String tableName) {
-        return null;
+        this.sql.append(" INSERT INTO ").append(tableName).append(" ");
+        return this;
     }
 
     @Override
     public InsertSqlGenerator fields(String... columns) {
-        return null;
+        return fields(Arrays.asList(columns));
     }
 
     @Override
-    public InsertSqlGenerator values(Object... values) {
-        return null;
+    public InsertSqlGenerator fields(Collection<String> columns) {
+        this.sql.append(StringUtils.foreach("(", ")", ",", columns));
+        return this;
     }
 
     @Override
-    public InsertSqlGenerator values(Collection values) {
-        return null;
+    public InsertSqlGenerator values() {
+        this.sql.append(" VALUES ");
+        return this;
+    }
+
+    @Override
+    public InsertSqlGenerator oneItem(Object... values) {
+        return oneItem(Arrays.asList(values));
+    }
+
+    @Override
+    public InsertSqlGenerator oneItem(List<Object> values) {
+        this.params.add(values);
+        this.sql.append(StringUtils.foreachByMark("(", ")", ",", values.size(), "?"));
+        return this;
+    }
+
+    @Override
+    public List<List<Object>> getParams() {
+        return this.params;
     }
 
     @Override
     public String getString() {
-        return null;
+        return sql.toString();
     }
 
     @Override
     public String getSql() {
-        return null;
+        return sql.toString();
     }
 
 }

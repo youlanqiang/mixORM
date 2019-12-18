@@ -16,6 +16,10 @@ public class EntityMate<T> {
 
     private Map<String, EntityField> fields;
 
+    public Map<String, Object> getVariable(T result){
+        return null;
+    }
+
 
     public Class<T> getClazz() {
         return clazz;

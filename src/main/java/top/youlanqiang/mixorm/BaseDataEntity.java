@@ -5,6 +5,7 @@ import top.youlanqiang.mixorm.domain.PageEntity;
 import top.youlanqiang.mixorm.mate.EntityMate;
 import top.youlanqiang.mixorm.mate.EntityMateContainer;
 import top.youlanqiang.mixorm.sql.ConditionSqlGenerator;
+import top.youlanqiang.mixorm.sql.InsertSqlGenerator;
 
 
 import javax.sql.DataSource;
@@ -45,6 +46,11 @@ class BaseDataEntity <T>  implements DataEntity<T> {
 
     @Override
     public int insert(T entity) {
+        Map<String, Object> variable = entityMate.getVariable(entity);
+        InsertSqlGenerator.create()
+                .insertInto(entityMate.getTableName())
+                .fields(variable.keySet()).values();
+
         return 0;
     }
 

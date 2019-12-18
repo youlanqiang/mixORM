@@ -3,6 +3,7 @@ package top.youlanqiang.mixorm.sql;
 import top.youlanqiang.mixorm.sql.mysql.MysqlInsertSqlGenerator;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface InsertSqlGenerator extends SqlGenerator {
 
@@ -17,8 +18,13 @@ public interface InsertSqlGenerator extends SqlGenerator {
 
     InsertSqlGenerator fields(String... columns);
 
-    InsertSqlGenerator values(Object... values);
+    InsertSqlGenerator fields(Collection<String> columns);
 
-    InsertSqlGenerator values(Collection values);
+    InsertSqlGenerator values();
 
+    InsertSqlGenerator oneItem(Object... values);
+
+    InsertSqlGenerator oneItem(List<Object> values);
+
+    List<List<Object>> getParams();
 }

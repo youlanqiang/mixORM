@@ -2,6 +2,8 @@ package top.youlanqiang.mixorm.sql;
 
 import top.youlanqiang.mixorm.sql.mysql.MysqlDeleteSqlGenerator;
 
+import java.util.List;
+
 public interface DeleteSqlGenerator extends SqlGenerator{
 
     /**
@@ -16,4 +18,5 @@ public interface DeleteSqlGenerator extends SqlGenerator{
 
     DeleteSqlGenerator where(ConditionSqlGenerator conditionSqlGenerator);
 
+    List<Object> getParams();
 }

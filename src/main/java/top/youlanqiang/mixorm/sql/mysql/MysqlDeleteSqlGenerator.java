@@ -8,25 +8,44 @@ import java.util.List;
 
 public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 
+    private StringBuilder sql;
+
+    private ConditionSqlGenerator conditionSqlGenerator;
+
+    public MysqlDeleteSqlGenerator(){
+        this.sql = new StringBuilder();
+        this.conditionSqlGenerator = null;
+    }
 
     @Override
     public DeleteSqlGenerator deleteForm(String tableName) {
-        return null;
+        this.sql.append(" DELETE FROM ").append(tableName).append(" ");
+        return this;
     }
 
     @Override
     public DeleteSqlGenerator where(ConditionSqlGenerator conditionSqlGenerator) {
-        return null;
+        this.conditionSqlGenerator = conditionSqlGenerator;
+        return this;
+    }
+
+    @Override
+    public List<Object> getParams() {
+        return conditionSqlGenerator.getParams();
     }
 
     @Override
     public String getString() {
-        return null;
+        return sql.toString();
     }
 
     @Override
     public String getSql() {
-        return null;
+        if(this.conditionSqlGenerator == null){
+            return getString();
+        }else{
+            return this.sql.toString() + this.conditionSqlGenerator.getSql();
+        }
     }
 
 

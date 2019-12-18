@@ -7,6 +7,10 @@ import java.util.List;
 
 public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 
+    private StringBuilder sql;
+
+    private ConditionSqlGenerator conditionSqlGenerator;
+
     @Override
     public SelectSqlGenerator select(String... columns) {
         return null;
