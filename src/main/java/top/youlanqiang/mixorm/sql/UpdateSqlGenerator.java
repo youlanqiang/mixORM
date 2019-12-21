@@ -2,6 +2,8 @@ package top.youlanqiang.mixorm.sql;
 
 import top.youlanqiang.mixorm.sql.mysql.MysqlUpdateSqlGenerator;
 
+import java.util.List;
+
 public interface UpdateSqlGenerator extends SqlGenerator {
 
     /**
@@ -16,4 +18,6 @@ public interface UpdateSqlGenerator extends SqlGenerator {
     UpdateSqlGenerator set(String column, Object value);
 
     UpdateSqlGenerator where(ConditionSqlGenerator conditionSqlGenerator);
+
+    List<Object> getParams();
 }

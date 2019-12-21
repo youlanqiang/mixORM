@@ -4,21 +4,18 @@ import top.youlanqiang.mixorm.sql.InsertSqlGenerator;
 import top.youlanqiang.mixorm.toolkit.StringUtils;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
 
     private StringBuilder sql;
 
-    private List<List<Object>> params;
+    private List<Collection<Object>> params;
 
 
     public MysqlInsertSqlGenerator() {
         this.sql = new StringBuilder();
-        this.params = new ArrayList<>();
+        this.params = new LinkedList<>();
     }
 
     @Override
@@ -50,14 +47,14 @@ public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
     }
 
     @Override
-    public InsertSqlGenerator oneItem(List<Object> values) {
+    public InsertSqlGenerator oneItem(Collection<Object> values) {
         this.params.add(values);
         this.sql.append(StringUtils.foreachByMark("(", ")", ",", values.size(), "?"));
         return this;
     }
 
     @Override
-    public List<List<Object>> getParams() {
+    public List<Collection<Object>> getParams() {
         return this.params;
     }
 

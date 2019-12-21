@@ -24,7 +24,7 @@ public interface InsertSqlGenerator extends SqlGenerator {
 
     InsertSqlGenerator oneItem(Object... values);
 
-    InsertSqlGenerator oneItem(List<Object> values);
+    InsertSqlGenerator oneItem(Collection<Object> values);
 
-    List<List<Object>> getParams();
+    List<Collection<Object>> getParams();
 }

@@ -3,6 +3,8 @@ package top.youlanqiang.mixorm.sql;
 
 import top.youlanqiang.mixorm.sql.mysql.MysqlSelectSqlGenerator;
 
+import java.util.Collection;
+
 public interface SelectSqlGenerator extends SqlGenerator {
 
     /**
@@ -13,6 +15,8 @@ public interface SelectSqlGenerator extends SqlGenerator {
     }
 
     SelectSqlGenerator select(String... columns);
+
+    SelectSqlGenerator select(Collection<String> columns);
 
     SelectSqlGenerator from(String tableName);
 

@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+//todo 待完成BaseDataEntity的所有功能
 class BaseDataEntity <T>  implements DataEntity<T> {
 
     private final QueryMapper<T> queryMapper;
@@ -47,11 +48,11 @@ class BaseDataEntity <T>  implements DataEntity<T> {
     @Override
     public int insert(T entity) {
         Map<String, Object> variable = entityMate.getVariable(entity);
-        InsertSqlGenerator.create()
+        InsertSqlGenerator sqlGenerator = InsertSqlGenerator.create()
                 .insertInto(entityMate.getTableName())
-                .fields(variable.keySet()).values();
-
-        return 0;
+                .fields(variable.keySet()).values().oneItem(variable.values());
+        QueryMapper.InsertResult result = queryMapper.insert(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams().get(0));
+        return result.getCount();
     }
 
     @Override

@@ -9,9 +9,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+//todo 待完成QueryMapper与数据库操作功能
 public class QueryMapper<T> {
 
 
@@ -67,11 +69,11 @@ public class QueryMapper<T> {
         return t;
     }
 
-    InsertResult insert(Connection conn, String sql, List<Object> param) {
+    InsertResult insert(Connection conn, String sql, Collection<Object> param) {
         return null;
     }
 
-    Integer executeToUpdate(Connection conn, String sql, List<Object> param) {
+    Integer executeToUpdate(Connection conn, String sql, Collection<Object> param) {
         return null;
     }
 
