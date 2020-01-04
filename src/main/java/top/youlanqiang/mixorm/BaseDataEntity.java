@@ -11,9 +11,11 @@ import top.youlanqiang.mixorm.sql.InsertSqlGenerator;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 //todo 待完成BaseDataEntity的所有功能
 class BaseDataEntity <T>  implements DataEntity<T> {
@@ -50,8 +52,8 @@ class BaseDataEntity <T>  implements DataEntity<T> {
         Map<String, Object> variable = entityMate.getVariable(entity);
         InsertSqlGenerator sqlGenerator = InsertSqlGenerator.create()
                 .insertInto(entityMate.getTableName())
-                .fields(variable.keySet()).values().oneItem(variable.values());
-        QueryMapper.InsertResult result = queryMapper.insert(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams().get(0));
+                .fields(new ArrayList<>(variable.keySet())).values().oneItem(variable.values());
+        QueryMapper.InsertResult result = queryMapper.insert(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
         return result.getCount();
     }
 

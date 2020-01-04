@@ -69,7 +69,23 @@ public class QueryMapper<T> {
         return t;
     }
 
-    InsertResult insert(Connection conn, String sql, Collection<Object> param) {
+    InsertResult insert(Connection conn, String sql, List<List<Object>> param) {
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            statement = conn.prepareStatement(sql);
+            for (List<Object> objects : param) {
+                for (int i = 0; i < objects.size(); i++) {
+                    statement.setObject(i, objects.indexOf(i));
+                }
+                statement.addBatch();
+            }
+            statement.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(conn, statement, resultSet);
+        }
         return null;
     }
 

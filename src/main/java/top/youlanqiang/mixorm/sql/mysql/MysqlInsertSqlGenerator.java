@@ -10,8 +10,9 @@ public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
 
     private StringBuilder sql;
 
-    private List<Collection<Object>> params;
+    private List<List<Object>> params;
 
+    private boolean batch;
 
     public MysqlInsertSqlGenerator() {
         this.sql = new StringBuilder();
@@ -30,7 +31,7 @@ public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
     }
 
     @Override
-    public InsertSqlGenerator fields(Collection<String> columns) {
+    public InsertSqlGenerator fields(List<String> columns) {
         this.sql.append(StringUtils.foreach("(", ")", ",", columns));
         return this;
     }
@@ -47,16 +48,20 @@ public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
     }
 
     @Override
-    public InsertSqlGenerator oneItem(Collection<Object> values) {
+    public InsertSqlGenerator oneItem(List<Object> values) {
         this.params.add(values);
-        this.sql.append(StringUtils.foreachByMark("(", ")", ",", values.size(), "?"));
+        if(!batch) {
+            this.sql.append(StringUtils.foreachByMark("(", ")", ",", values.size(), "?"));
+            batch = true;
+        }
         return this;
     }
 
     @Override
-    public List<Collection<Object>> getParams() {
+    public List<List<Object>> getParams() {
         return this.params;
     }
+
 
     @Override
     public String getString() {

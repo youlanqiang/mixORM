@@ -1,6 +1,11 @@
 package top.youlanqiang.mixorm.mate;
 
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class EntityMate<T> {
@@ -16,10 +21,29 @@ public class EntityMate<T> {
 
     private Map<String, EntityField> fields;
 
-
+    /**
+     * 获取字段名和值，包含主键
+     * @param result 对象实体类
+     * @return 返回对象的字段名和值
+     */
     public Map<String, Object> getVariable(T result){
-        //todo 获取字段名和值
-        return null;
+        Collection<EntityField> fields = getFields().values();
+        if(hasId){
+            fields.add(getIdEntity());
+        }
+        Map<String, Object> variable = new HashMap<>(fields.size());
+        for (EntityField field : fields) {
+            Object value = null;
+            try {
+                Method method  = clazz.getMethod(field.getGetMethod(),  null);
+                method.setAccessible(true);
+                value = method.invoke(field, null);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+            variable.put(field.getColumnName(), value);
+        }
+        return variable;
     }
 
 

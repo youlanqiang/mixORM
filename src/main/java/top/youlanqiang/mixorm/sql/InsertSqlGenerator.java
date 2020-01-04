@@ -18,13 +18,14 @@ public interface InsertSqlGenerator extends SqlGenerator {
 
     InsertSqlGenerator fields(String... columns);
 
-    InsertSqlGenerator fields(Collection<String> columns);
+    InsertSqlGenerator fields(List<String> columns);
 
     InsertSqlGenerator values();
 
     InsertSqlGenerator oneItem(Object... values);
 
-    InsertSqlGenerator oneItem(Collection<Object> values);
+    InsertSqlGenerator oneItem(List<Object> values);
 
-    List<Collection<Object>> getParams();
+    List<List<Object>> getParams();
+
 }
