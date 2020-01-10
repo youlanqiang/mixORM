@@ -1,6 +1,7 @@
 package top.youlanqiang.mixorm.sql;
 
 
+import java.util.List;
 
 public interface SqlGenerator {
 
@@ -8,5 +9,5 @@ public interface SqlGenerator {
 
     String getSql();
 
-
+    List<Object> getParams();
 }

@@ -9,12 +9,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-//todo 待完成QueryMapper与数据库操作功能
-public class QueryMapper<T> {
+class QueryMapper<T> {
 
 
     private final EntityMate<T> mate;
@@ -31,8 +29,10 @@ public class QueryMapper<T> {
         List<T> list = new ArrayList<>();
         try {
             statement = conn.prepareStatement(sql);
-            for (int i = 0; i < param.size(); i++) {
-                statement.setObject(i + 1, param.get(i));
+            if(param != null) {
+                for (int i = 0; i < param.size(); i++) {
+                    statement.setObject(i + 1, param.get(i));
+                }
             }
             resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -54,8 +54,10 @@ public class QueryMapper<T> {
         T t = null;
         try {
             statement = conn.prepareStatement(sql);
-            for (int i = 0; i < param.size(); i++) {
-                statement.setObject(i + 1, param.get(i));
+            if(param != null) {
+                for (int i = 0; i < param.size(); i++) {
+                    statement.setObject(i + 1, param.get(i));
+                }
             }
             resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -69,28 +71,78 @@ public class QueryMapper<T> {
         return t;
     }
 
-    InsertResult insert(Connection conn, String sql, List<List<Object>> param) {
+    Integer queryToInteger(Connection conn, String sql, List<Object> param) {
         PreparedStatement statement = null;
         ResultSet resultSet = null;
+        int t = 0;
         try {
             statement = conn.prepareStatement(sql);
-            for (List<Object> objects : param) {
-                for (int i = 0; i < objects.size(); i++) {
-                    statement.setObject(i, objects.indexOf(i));
+            if (param != null) {
+                for (int i = 0; i < param.size(); i++) {
+                    statement.setObject(i + 1, param.get(i));
                 }
-                statement.addBatch();
             }
-            statement.executeBatch();
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                t = resultSet.getInt(1);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             close(conn, statement, resultSet);
         }
-        return null;
+        return t;
     }
 
-    Integer executeToUpdate(Connection conn, String sql, Collection<Object> param) {
-        return null;
+    InsertResult insert(Connection conn, String sql, List<Object> param, boolean hasKey) {
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            if (hasKey) {
+                statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            } else {
+                statement = conn.prepareStatement(sql);
+            }
+            if(param != null) {
+                for (int i = 0; i < param.size(); i++) {
+                    statement.setObject(i + 1, param.get(i));
+                }
+            }
+            int count = statement.executeUpdate();
+            if (hasKey) {
+                resultSet = statement.getGeneratedKeys();
+                if (resultSet.next()) {
+                    Object key = resultSet.getObject(1);
+                    return new InsertResult(count, key);
+                }
+            }
+            return new InsertResult(count, null);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(conn, statement, resultSet);
+        }
+        return new InsertResult(0, null);
+    }
+
+    Integer executeToUpdate(Connection conn, String sql, List<Object> param) {
+        PreparedStatement statement = null;
+        try {
+            statement = conn.prepareStatement(sql);
+            if(param != null) {
+                for (int i = 0; i < param.size(); i++) {
+                    statement.setObject(i + 1, param.get(i));
+                }
+            }
+            return statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(conn, statement, null);
+        }
+        return 0;
     }
 
     public EntityMate<T> getMate() {
@@ -109,10 +161,11 @@ public class QueryMapper<T> {
 
     /**
      * 根据数据库查询结果集构造一个实体类对象
+     *
      * @param resultSet 数据库结果集
      * @return 实体类对象
      */
-    private T transform(ResultSet resultSet){
+    private T transform(ResultSet resultSet) {
         Class<T> tClass = mate.getClazz();
         T result = null;
         try {
@@ -123,7 +176,7 @@ public class QueryMapper<T> {
             idMethod.invoke(result, resultSet.getObject(id.getColumnName()));
 
             Map<String, EntityField> fields = mate.getFields();
-            for(String key : fields.keySet()){
+            for (String key : fields.keySet()) {
                 EntityField field = fields.get(key);
                 Method method = tClass.getMethod(field.getSetMethod(), field.getColumnType());
                 idMethod.invoke(result, resultSet.getObject(field.getColumnName()));
@@ -139,7 +192,15 @@ public class QueryMapper<T> {
     static class InsertResult {
         private Integer count;
 
-        private List<Object> idList;
+        private Object key;
+
+        public InsertResult() {
+        }
+
+        public InsertResult(Integer count, Object key) {
+            this.count = count;
+            this.key = key;
+        }
 
         public Integer getCount() {
             return count;
@@ -149,12 +210,12 @@ public class QueryMapper<T> {
             this.count = count;
         }
 
-        public List<Object> getIdList() {
-            return idList;
+        public Object getKey() {
+            return key;
         }
 
-        public void setIdList(List<Object> idList) {
-            this.idList = idList;
+        public void setKey(Object key) {
+            this.key = key;
         }
     }
 }

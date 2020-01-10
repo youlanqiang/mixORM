@@ -40,7 +40,10 @@ public class MysqlUpdateSqlGenerator implements UpdateSqlGenerator {
 
     @Override
     public UpdateSqlGenerator where(ConditionSqlGenerator conditionSqlGenerator) {
-        this.conditionSqlGenerator = conditionSqlGenerator;
+        if(conditionSqlGenerator != null){
+            this.conditionSqlGenerator = conditionSqlGenerator;
+            this.params.addAll(conditionSqlGenerator.getParams());
+        }
         return this;
     }
 

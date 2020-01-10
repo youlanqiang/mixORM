@@ -4,6 +4,7 @@ package top.youlanqiang.mixorm.sql;
 import top.youlanqiang.mixorm.sql.mysql.MysqlSelectSqlGenerator;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface SelectSqlGenerator extends SqlGenerator {
 
@@ -21,5 +22,7 @@ public interface SelectSqlGenerator extends SqlGenerator {
     SelectSqlGenerator from(String tableName);
 
     SelectSqlGenerator where(ConditionSqlGenerator conditionSqlGenerator);
+
+    List<Object> getParams();
 
 }

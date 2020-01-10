@@ -2,23 +2,21 @@ package top.youlanqiang.mixorm;
 
 import top.youlanqiang.mixorm.domain.DataEntity;
 import top.youlanqiang.mixorm.domain.PageEntity;
+import top.youlanqiang.mixorm.domain.SimplePageEntity;
+import top.youlanqiang.mixorm.exceptions.SqlGeneratorException;
 import top.youlanqiang.mixorm.mate.EntityMate;
 import top.youlanqiang.mixorm.mate.EntityMateContainer;
-import top.youlanqiang.mixorm.sql.ConditionSqlGenerator;
-import top.youlanqiang.mixorm.sql.InsertSqlGenerator;
+import top.youlanqiang.mixorm.sql.*;
 
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
+
 
 //todo 待完成BaseDataEntity的所有功能
-class BaseDataEntity <T>  implements DataEntity<T> {
+class BaseDataEntity<T> implements DataEntity<T> {
 
     private final QueryMapper<T> queryMapper;
 
@@ -28,106 +26,207 @@ class BaseDataEntity <T>  implements DataEntity<T> {
 
     private DataSource dataSource;
 
-    public BaseDataEntity(Class<T> clazz){
+    public BaseDataEntity(Class<T> clazz) {
         EntityMate<T> mate = EntityMateContainer.getInstance().get(clazz);
         this.queryMapper = new QueryMapper<>(mate);
         this.entityMate = queryMapper.getMate();
     }
 
     @Override
-    public DataEntity<T> source(DataSource dataSource){
+    public DataEntity<T> source(DataSource dataSource) {
         this.dataSource = dataSource;
         return this;
     }
 
 
     @Override
-    public DataEntity<T> use(Connection connection){
+    public DataEntity<T> use(Connection connection) {
         this.connection = connection;
         return this;
     }
 
     @Override
-    public int insert(T entity) {
-        Map<String, Object> variable = entityMate.getVariable(entity);
+    public Integer insert(T entity) {
+        Map<String, Object> variable = entityMate.getVariableSkipNull(entity);
         InsertSqlGenerator sqlGenerator = InsertSqlGenerator.create()
                 .insertInto(entityMate.getTableName())
                 .fields(new ArrayList<>(variable.keySet())).values().oneItem(variable.values());
-        QueryMapper.InsertResult result = queryMapper.insert(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
+        QueryMapper.InsertResult result = queryMapper.insert(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams(), entityMate.isHasId());
         return result.getCount();
     }
 
     @Override
-    public int deleteById(Object id) {
-        return 0;
+    public Integer deleteById(Object id) {
+        if (entityMate.isHasId()) {
+
+            DeleteSqlGenerator sqlGenerator = DeleteSqlGenerator.create()
+                    .deleteForm(entityMate.getTableName())
+                    .where(ConditionSqlGenerator.create().eq(entityMate.getIdEntity().getColumnName(), id));
+            return queryMapper.executeToUpdate(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
+
+        } else {
+            throw new SqlGeneratorException("对象没有设置主键.");
+        }
+
     }
 
     @Override
-    public int deleteByMap(Map<String, Object> map) {
-        return 0;
+    public Integer deleteByMap(Map<String, Object> map) {
+        ConditionSqlGenerator condition = ConditionSqlGenerator.create();
+
+        /*
+          这段代码的逻辑是保证 SqlGenerator，
+          最后生成的 sql 结尾不会带 and.
+         */
+        Set<String> keys = map.keySet();
+        Iterator<String> iterator = keys.iterator();
+        while (iterator.hasNext()) {
+            String key = iterator.next();
+            condition.eq(key, map.get(key));
+            if (iterator.hasNext()) {
+                condition.and();
+            }
+        }
+
+        return deleteByCondition(condition);
     }
 
     @Override
-    public int deleteByCondition(ConditionSqlGenerator sql) {
-        return 0;
+    public Integer deleteBatchIds(List<Object> idList) {
+        if (entityMate.isHasId()) {
+            ConditionSqlGenerator condition = ConditionSqlGenerator.create()
+                    .in(entityMate.getIdEntity().getColumnName(), idList);
+            return deleteByCondition(condition);
+        } else {
+            throw new SqlGeneratorException("对象没有设置主键.");
+        }
     }
 
     @Override
-    public int deleteBatchIds(Collection<Object> idList) {
-        return 0;
+    public Integer deleteByCondition(ConditionSqlGenerator sql) {
+        DeleteSqlGenerator sqlGenerator = DeleteSqlGenerator.create()
+                .deleteForm(entityMate.getTableName()).where(sql);
+        return queryMapper.executeToUpdate(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
+    }
+
+
+    @Override
+    public Integer updateById(T entity) {
+        if (entityMate.isHasId()) {
+            UpdateSqlGenerator sqlGenerator = UpdateSqlGenerator.create()
+                    .update(entityMate.getTableName());
+            Map<String, Object> variables = entityMate.getVariableSkipNull(entity);
+            variables.forEach(sqlGenerator::set);
+            return queryMapper.executeToUpdate(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
+        } else {
+            throw new SqlGeneratorException("对象没有设置主键.");
+        }
+
     }
 
     @Override
-    public int updateById(T entity) {
-        return 0;
-    }
-
-    @Override
-    public int update(T entity, ConditionSqlGenerator sql) {
-        return 0;
+    public Integer update(T entity, ConditionSqlGenerator sql) {
+        UpdateSqlGenerator sqlGenerator = UpdateSqlGenerator.create()
+                .update(entityMate.getTableName());
+        Map<String, Object> variables = entityMate.getVariableSkipNull(entity);
+        variables.forEach(sqlGenerator::set);
+        sqlGenerator.where(sql);
+        return queryMapper.executeToUpdate(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
     }
 
     @Override
     public T selectById(Object id) {
-        return null;
-    }
-
-    @Override
-    public List<T> selectByMap(Map<String, Object> map) {
-        return null;
+        if (entityMate.isHasId()) {
+            ConditionSqlGenerator condition = ConditionSqlGenerator.create().eq(entityMate.getIdEntity().getColumnName(), id);
+            return selectOne(condition);
+        } else {
+            throw new SqlGeneratorException("对象没有设置主键.");
+        }
     }
 
     @Override
     public T selectOne(ConditionSqlGenerator sql) {
-        return null;
+        SelectSqlGenerator sqlGenerator = SelectSqlGenerator.create()
+                .select(entityMate.getFields().keySet())
+                .from(entityMate.getTableName())
+                .where(sql);
+        return queryMapper.queryToSingle(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
     }
 
     @Override
     public Integer selectCount(ConditionSqlGenerator sql) {
-        return null;
+        SelectSqlGenerator sqlGenerator = SelectSqlGenerator.create()
+                .select(" COUNT(*) ")
+                .from(entityMate.getTableName())
+                .where(sql);
+        return queryMapper.queryToInteger(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
     }
 
     @Override
+    public List<T> selectByMap(Map<String, Object> map) {
+        ConditionSqlGenerator condition = ConditionSqlGenerator.create();
+         /*
+          这段代码的逻辑是保证 SqlGenerator，
+          最后生成的 sql 结尾不会带 and.
+         */
+        Set<String> keys = map.keySet();
+        Iterator<String> iterator = keys.iterator();
+        while (iterator.hasNext()) {
+            String key = iterator.next();
+            condition.eq(key, map.get(key));
+            if (iterator.hasNext()) {
+                condition.and();
+            }
+        }
+        return selectList(condition);
+    }
+
+
+    @Override
     public List<T> selectList(ConditionSqlGenerator sql) {
-        return null;
+        SelectSqlGenerator sqlGenerator = SelectSqlGenerator.create()
+                .select(entityMate.getFields().keySet())
+                .from(entityMate.getTableName())
+                .where(sql);
+        return queryMapper.queryToList(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
     }
 
     @Override
     public PageEntity<T> selectPage(int current, int size) {
-        return null;
+        PageEntity<T> pageEntity = new SimplePageEntity<>(current, size);
+
+        Integer count = selectCount(null);
+        pageEntity.setTotal(count);
+
+        ConditionSqlGenerator condition = ConditionSqlGenerator.create()
+                .limit( (current - 1) * size, size);
+        List<T> list = selectList(condition);
+        pageEntity.setList(list);
+        return pageEntity;
     }
 
     @Override
     public PageEntity<T> selectPage(int current, int size, ConditionSqlGenerator sql) {
-        return null;
+        PageEntity<T> pageEntity = new SimplePageEntity<>(current, size);
+
+        Integer count = selectCount(sql);
+        pageEntity.setTotal(count);
+
+        if(sql == null){
+            throw new SqlGeneratorException();
+        }
+        sql.limit((current - 1) * size, size);
+        List<T> list = selectList(sql);
+        pageEntity.setList(list);
+        return pageEntity;
     }
 
 
     private Connection getConnection() {
-        if(connection != null){
+        if (connection != null) {
             return connection;
         }
-        if(dataSource != null){
+        if (dataSource != null) {
             try {
                 return dataSource.getConnection();
             } catch (SQLException e) {

@@ -44,6 +44,14 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
     }
 
     @Override
+    public List<Object> getParams() {
+        if(this.conditionSqlGenerator != null){
+            return this.conditionSqlGenerator.getParams();
+        }
+        return null;
+    }
+
+    @Override
     public String getString() {
         return sql.toString();
     }

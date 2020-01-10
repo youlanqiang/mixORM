@@ -22,11 +22,11 @@ public class EntityMate<T> {
     private Map<String, EntityField> fields;
 
     /**
-     * 获取字段名和值，包含主键
+     * 获取字段名和值，包含主键,不包含为null的字段
      * @param result 对象实体类
      * @return 返回对象的字段名和值
      */
-    public Map<String, Object> getVariable(T result){
+    public Map<String, Object> getVariableSkipNull(T result){
         Collection<EntityField> fields = getFields().values();
         if(hasId){
             fields.add(getIdEntity());
@@ -41,7 +41,9 @@ public class EntityMate<T> {
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
-            variable.put(field.getColumnName(), value);
+            if(value != null) {
+                variable.put(field.getColumnName(), value);
+            }
         }
         return variable;
     }

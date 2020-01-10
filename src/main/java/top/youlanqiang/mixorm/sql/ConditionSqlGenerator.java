@@ -9,7 +9,7 @@ import java.util.List;
 public interface ConditionSqlGenerator extends SqlGenerator {
 
     /**
-     * @return 返回对应数据库的SqlGenerator,默认为mysql
+     * @return 返回对应数据库的SqlGenerator, 默认为mysql
      */
     static ConditionSqlGenerator create() {
         return new MysqlConditionSqlGenerator();
@@ -37,7 +37,7 @@ public interface ConditionSqlGenerator extends SqlGenerator {
 
     ConditionSqlGenerator like(String column, Object val);
 
-   ConditionSqlGenerator notLike(String column, Object val);
+    ConditionSqlGenerator notLike(String column, Object val);
 
     ConditionSqlGenerator likeLeft(String column, Object val);
 
@@ -51,7 +51,7 @@ public interface ConditionSqlGenerator extends SqlGenerator {
 
     ConditionSqlGenerator in(String column, Collection values);
 
-   ConditionSqlGenerator notIn(String column, Object... values);
+    ConditionSqlGenerator notIn(String column, Object... values);
 
     ConditionSqlGenerator notIn(String column, Collection values);
 
@@ -61,11 +61,15 @@ public interface ConditionSqlGenerator extends SqlGenerator {
 
     ConditionSqlGenerator groupBy(String... columns);
 
-   ConditionSqlGenerator orderByAsc(String... columns);
+    ConditionSqlGenerator orderByAsc(String... columns);
 
     ConditionSqlGenerator orderByDesc(String... columns);
 
-   ConditionSqlGenerator having(String sqlHaving);
+    ConditionSqlGenerator having(String sqlHaving);
+
+    ConditionSqlGenerator limit(Integer offset, Integer rows);
+
+    ConditionSqlGenerator limit(Integer offset);
 
     List<Object> getParams();
 }

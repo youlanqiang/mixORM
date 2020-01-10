@@ -1,5 +1,6 @@
 package top.youlanqiang.mixorm.sql.mysql;
 
+import top.youlanqiang.mixorm.exceptions.SqlGeneratorException;
 import top.youlanqiang.mixorm.sql.InsertSqlGenerator;
 import top.youlanqiang.mixorm.toolkit.StringUtils;
 
@@ -10,7 +11,7 @@ public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
 
     private StringBuilder sql;
 
-    private List<List<Object>> params;
+    private List<Object> params;
 
     private boolean batch;
 
@@ -49,16 +50,18 @@ public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
 
     @Override
     public InsertSqlGenerator oneItem(List<Object> values) {
-        this.params.add(values);
+        this.params = values;
         if(!batch) {
             this.sql.append(StringUtils.foreachByMark("(", ")", ",", values.size(), "?"));
             batch = true;
+        }else{
+            throw new SqlGeneratorException();
         }
         return this;
     }
 
     @Override
-    public List<List<Object>> getParams() {
+    public List<Object> getParams() {
         return this.params;
     }
 

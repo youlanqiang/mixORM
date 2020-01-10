@@ -12,4 +12,12 @@ public interface PageEntity<T> {
 
     List<T> getList();
 
+    void setTotal(Integer total);
+
+    void setCurrent(Integer current);
+
+    void setSize(Integer size);
+
+    void setList(List<T> list);
+
 }

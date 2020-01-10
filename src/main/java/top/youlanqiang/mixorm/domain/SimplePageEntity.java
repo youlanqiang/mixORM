@@ -2,7 +2,7 @@ package top.youlanqiang.mixorm.domain;
 
 import java.util.List;
 
-public class SimplePageEntity<T> implements PageEntity{
+public class SimplePageEntity<T> implements PageEntity<T>{
 
     private Integer total;
 
@@ -19,18 +19,22 @@ public class SimplePageEntity<T> implements PageEntity{
         this.size = size;
     }
 
+    @Override
     public void setTotal(Integer total) {
         this.total = total;
     }
 
+    @Override
     public void setCurrent(Integer current) {
         this.current = current;
     }
 
+    @Override
     public void setSize(Integer size) {
         this.size = size;
     }
 
+    @Override
     public void setList(List<T> list) {
         this.list = list;
     }

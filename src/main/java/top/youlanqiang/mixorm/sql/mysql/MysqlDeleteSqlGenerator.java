@@ -31,7 +31,10 @@ public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 
     @Override
     public List<Object> getParams() {
-        return conditionSqlGenerator.getParams();
+        if(this.conditionSqlGenerator != null){
+            return conditionSqlGenerator.getParams();
+        }
+        return null;
     }
 
     @Override

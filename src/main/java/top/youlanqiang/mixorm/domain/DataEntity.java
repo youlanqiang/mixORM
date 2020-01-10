@@ -30,42 +30,42 @@ public interface DataEntity<T> {
      * @param entity 实体对象
      * @return 插入成功记录数
      */
-    int insert(T entity);
+    Integer insert(T entity);
 
     /**
      * 根据ID删除
      * @param id 主键ID
      * @return 删除成功记录数
      */
-    int deleteById(Object id);
+    Integer deleteById(Object id);
 
     /**
      * 根据map删除对象
      * @param map 字段map对象
      * @return 删除成功记录数
      */
-    int deleteByMap(Map<String, Object> map);
+    Integer deleteByMap(Map<String, Object> map);
 
     /**
      * 根据条件构造器删除
      * @param sql 条件构造器
      * @return 删除成功记录数
      */
-    int deleteByCondition(ConditionSqlGenerator sql);
+    Integer deleteByCondition(ConditionSqlGenerator sql);
 
     /**
      * 删除，根据ID批量删除
      * @param idList 主键ID列表
      * @return 删除成功记录数
      */
-    int deleteBatchIds(Collection<Object> idList);
+    Integer deleteBatchIds(List<Object> idList);
 
     /**
      * 根据ID修改
      * @param entity 实体对象
      * @return 修改成功记录数
      */
-    int updateById(T entity);
+    Integer updateById(T entity);
 
     /**
      * 根据条件构造器更新
@@ -73,7 +73,7 @@ public interface DataEntity<T> {
      * @param sql 条件构造器
      * @return 修改成功记录数
      */
-    int update(T entity, ConditionSqlGenerator sql);
+    Integer update(T entity, ConditionSqlGenerator sql);
 
     /**
      * 根据ID查询
