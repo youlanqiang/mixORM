@@ -151,7 +151,7 @@ class QueryMapper<T> {
     }
 
     Integer executeToUpdate(Connection conn, String sql, List<Object> param) {
-        
+
         before(sql, param);
 
         PreparedStatement statement = null;
