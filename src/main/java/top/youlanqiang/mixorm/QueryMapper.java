@@ -23,7 +23,18 @@ class QueryMapper<T> {
     }
 
 
+    private void before(String sql, List<Object> param){
+        if(Mixorm.getInstance().getConfig().isDebug()){
+            System.out.println("SQL:" + sql);
+            System.out.println("PARAMS:" + param.toString());
+        }
+    }
+
+
     List<T> queryToList(Connection conn, String sql, List<Object> param) {
+
+        before(sql, param);
+
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         List<T> list = new ArrayList<>();
@@ -49,6 +60,9 @@ class QueryMapper<T> {
 
 
     T queryToSingle(Connection conn, String sql, List<Object> param) {
+
+        before(sql, param);
+
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         T t = null;
@@ -72,6 +86,10 @@ class QueryMapper<T> {
     }
 
     Integer queryToInteger(Connection conn, String sql, List<Object> param) {
+
+        before(sql, param);
+
+
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         int t = 0;
@@ -95,6 +113,11 @@ class QueryMapper<T> {
     }
 
     InsertResult insert(Connection conn, String sql, List<Object> param, boolean hasKey) {
+
+
+        before(sql, param);
+
+
         PreparedStatement statement = null;
         ResultSet resultSet = null;
 
@@ -128,6 +151,9 @@ class QueryMapper<T> {
     }
 
     Integer executeToUpdate(Connection conn, String sql, List<Object> param) {
+        
+        before(sql, param);
+
         PreparedStatement statement = null;
         try {
             statement = conn.prepareStatement(sql);
