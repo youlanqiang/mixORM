@@ -26,6 +26,8 @@ class BaseDataEntity<T> implements DataEntity<T> {
 
     private DataSource dataSource;
 
+    private String productName;
+
     public BaseDataEntity(Class<T> clazz) {
         EntityMate<T> mate = EntityMateContainer.getInstance().get(clazz);
         this.queryMapper = new QueryMapper<>(mate);
@@ -33,22 +35,28 @@ class BaseDataEntity<T> implements DataEntity<T> {
     }
 
     @Override
-    public DataEntity<T> source(DataSource dataSource) {
+    public DataEntity<T> source(DataSource dataSource) throws SQLException {
         this.dataSource = dataSource;
+        //获取数据库厂商名称
+        try(Connection connection = dataSource.getConnection()){
+            this.productName = connection.getMetaData().getDatabaseProductName();
+        }
         return this;
     }
 
 
     @Override
-    public DataEntity<T> use(Connection connection) {
+    public DataEntity<T> use(Connection connection) throws SQLException {
         this.connection = connection;
+        //获取数据库厂商名称
+        this.productName = connection.getMetaData().getDatabaseProductName();
         return this;
     }
 
     @Override
     public Integer insert(T entity) {
         Map<String, Object> variable = entityMate.getVariableSkipNull(entity);
-        InsertSqlGenerator sqlGenerator = InsertSqlGenerator.create()
+        InsertSqlGenerator sqlGenerator = InsertSqlGenerator.create(productName)
                 .insertInto(entityMate.getTableName())
                 .fields(new ArrayList<>(variable.keySet())).values().oneItem(variable.values());
         QueryMapper.InsertResult result = queryMapper.insert(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams(), entityMate.isHasId());
@@ -59,9 +67,9 @@ class BaseDataEntity<T> implements DataEntity<T> {
     public Integer deleteById(Object id) {
         if (entityMate.isHasId()) {
 
-            DeleteSqlGenerator sqlGenerator = DeleteSqlGenerator.create()
+            DeleteSqlGenerator sqlGenerator = DeleteSqlGenerator.create(productName)
                     .deleteForm(entityMate.getTableName())
-                    .where(ConditionSqlGenerator.create().eq(entityMate.getIdEntity().getColumnName(), id));
+                    .where(ConditionSqlGenerator.create(productName).eq(entityMate.getIdEntity().getColumnName(), id));
             return queryMapper.executeToUpdate(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
 
         } else {
@@ -72,7 +80,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
 
     @Override
     public Integer deleteByMap(Map<String, Object> map) {
-        ConditionSqlGenerator condition = ConditionSqlGenerator.create();
+        ConditionSqlGenerator condition = ConditionSqlGenerator.create(productName);
 
         /*
           这段代码的逻辑是保证 SqlGenerator，
@@ -94,7 +102,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
     @Override
     public Integer deleteBatchIds(List<Object> idList) {
         if (entityMate.isHasId()) {
-            ConditionSqlGenerator condition = ConditionSqlGenerator.create()
+            ConditionSqlGenerator condition = ConditionSqlGenerator.create(productName)
                     .in(entityMate.getIdEntity().getColumnName(), idList);
             return deleteByCondition(condition);
         } else {
@@ -104,7 +112,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
 
     @Override
     public Integer deleteByCondition(ConditionSqlGenerator sql) {
-        DeleteSqlGenerator sqlGenerator = DeleteSqlGenerator.create()
+        DeleteSqlGenerator sqlGenerator = DeleteSqlGenerator.create(productName)
                 .deleteForm(entityMate.getTableName()).where(sql);
         return queryMapper.executeToUpdate(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
     }
@@ -113,7 +121,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
     @Override
     public Integer updateById(T entity) {
         if (entityMate.isHasId()) {
-            UpdateSqlGenerator sqlGenerator = UpdateSqlGenerator.create()
+            UpdateSqlGenerator sqlGenerator = UpdateSqlGenerator.create(productName)
                     .update(entityMate.getTableName());
             Map<String, Object> variables = entityMate.getVariableSkipNull(entity);
             variables.forEach(sqlGenerator::set);
@@ -126,7 +134,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
 
     @Override
     public Integer update(T entity, ConditionSqlGenerator sql) {
-        UpdateSqlGenerator sqlGenerator = UpdateSqlGenerator.create()
+        UpdateSqlGenerator sqlGenerator = UpdateSqlGenerator.create(productName)
                 .update(entityMate.getTableName());
         Map<String, Object> variables = entityMate.getVariableSkipNull(entity);
         variables.forEach(sqlGenerator::set);
@@ -137,7 +145,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
     @Override
     public T selectById(Object id) {
         if (entityMate.isHasId()) {
-            ConditionSqlGenerator condition = ConditionSqlGenerator.create().eq(entityMate.getIdEntity().getColumnName(), id);
+            ConditionSqlGenerator condition = ConditionSqlGenerator.create(productName).eq(entityMate.getIdEntity().getColumnName(), id);
             return selectOne(condition);
         } else {
             throw new SqlGeneratorException("对象没有设置主键.");
@@ -146,7 +154,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
 
     @Override
     public T selectOne(ConditionSqlGenerator sql) {
-        SelectSqlGenerator sqlGenerator = SelectSqlGenerator.create()
+        SelectSqlGenerator sqlGenerator = SelectSqlGenerator.create(productName)
                 .select(entityMate.getFields().keySet())
                 .from(entityMate.getTableName())
                 .where(sql);
@@ -155,7 +163,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
 
     @Override
     public Integer selectCount(ConditionSqlGenerator sql) {
-        SelectSqlGenerator sqlGenerator = SelectSqlGenerator.create()
+        SelectSqlGenerator sqlGenerator = SelectSqlGenerator.create(productName)
                 .select(" COUNT(*) ")
                 .from(entityMate.getTableName())
                 .where(sql);
@@ -164,7 +172,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
 
     @Override
     public List<T> selectByMap(Map<String, Object> map) {
-        ConditionSqlGenerator condition = ConditionSqlGenerator.create();
+        ConditionSqlGenerator condition = ConditionSqlGenerator.create(productName);
          /*
           这段代码的逻辑是保证 SqlGenerator，
           最后生成的 sql 结尾不会带 and.
@@ -184,7 +192,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
 
     @Override
     public List<T> selectList(ConditionSqlGenerator sql) {
-        SelectSqlGenerator sqlGenerator = SelectSqlGenerator.create()
+        SelectSqlGenerator sqlGenerator = SelectSqlGenerator.create(productName)
                 .select(entityMate.getFields().keySet())
                 .from(entityMate.getTableName())
                 .where(sql);
@@ -198,7 +206,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
         Integer count = selectCount(null);
         pageEntity.setTotal(count);
 
-        ConditionSqlGenerator condition = ConditionSqlGenerator.create()
+        ConditionSqlGenerator condition = ConditionSqlGenerator.create(productName)
                 .limit( (current - 1) * size, size);
         List<T> list = selectList(condition);
         pageEntity.setList(list);

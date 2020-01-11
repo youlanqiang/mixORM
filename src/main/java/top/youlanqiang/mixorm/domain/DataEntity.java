@@ -4,6 +4,7 @@ import top.youlanqiang.mixorm.sql.ConditionSqlGenerator;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ public interface DataEntity<T> {
      * @param dataSource 数据源
      * @return dataEntity
      */
-    DataEntity<T> source(DataSource dataSource);
+    DataEntity<T> source(DataSource dataSource) throws SQLException;
 
     /**
      * 单独使用一个数据库连接，在使用完后续方法后
@@ -23,7 +24,7 @@ public interface DataEntity<T> {
      * @param connection 一个连接
      * @return dataEntity对象
      */
-    DataEntity<T> use(Connection connection);
+    DataEntity<T> use(Connection connection) throws SQLException;
 
     /**
      * 插入一条记录

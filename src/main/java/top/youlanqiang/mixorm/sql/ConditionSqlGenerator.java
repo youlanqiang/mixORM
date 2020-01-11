@@ -1,6 +1,7 @@
 package top.youlanqiang.mixorm.sql;
 
 
+import top.youlanqiang.mixorm.exceptions.SqlGeneratorException;
 import top.youlanqiang.mixorm.sql.mysql.MysqlConditionSqlGenerator;
 
 import java.util.Collection;
@@ -11,8 +12,11 @@ public interface ConditionSqlGenerator extends SqlGenerator {
     /**
      * @return 返回对应数据库的SqlGenerator, 默认为mysql
      */
-    static ConditionSqlGenerator create() {
-        return new MysqlConditionSqlGenerator();
+    static ConditionSqlGenerator create(String productName) {
+        if(productName.equals("MySQL")){
+            return new MysqlConditionSqlGenerator();
+        }
+        throw new SqlGeneratorException("未支持的数据库类型:" + productName);
     }
 
     ConditionSqlGenerator and();

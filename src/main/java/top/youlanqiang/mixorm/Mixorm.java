@@ -2,15 +2,35 @@ package top.youlanqiang.mixorm;
 
 public final class Mixorm {
 
+    private MixormConfig mixormConfig;
+
     private Mixorm(){}
 
-    private static final String VERSION = "0.0.1_alpha";
+    public static final String VERSION = "1.0.0_alpha";
 
-    public static <T> BaseDataEntity<T> create(Class<T> clazz){
+    public static Mixorm getInstance(){
+        return InnerObject.mixorm;
+    }
+
+    public Mixorm config(MixormConfig config){
+        this.mixormConfig = config;
+        return this;
+    }
+
+    public MixormConfig getConfig(){
+        return this.mixormConfig;
+    }
+
+
+    public <T> BaseDataEntity<T> create(Class<T> clazz){
         return new BaseDataEntity<>(clazz);
     }
 
-    public static String getVersion(){
-        return VERSION;
+
+
+    private static class InnerObject{
+        private static final Mixorm mixorm = new Mixorm();
     }
+
+
 }
