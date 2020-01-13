@@ -3,9 +3,7 @@ package top.youlanqiang.mixorm.mate;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author youlanqiang
@@ -29,7 +27,7 @@ public class EntityMate<T> {
      * @return 返回对象的字段名和值
      */
     public Map<String, Object> getVariableSkipNull(T result){
-        Collection<EntityField> fields = getFields().values();
+        List<EntityField> fields = new ArrayList<>(getFields().values());
         if(hasId){
             fields.add(getIdEntity());
         }
@@ -37,9 +35,9 @@ public class EntityMate<T> {
         for (EntityField field : fields) {
             Object value = null;
             try {
-                Method method  = clazz.getMethod(field.getGetMethod(),  null);
+                Method method  = clazz.getDeclaredMethod(field.getGetMethod(),  null);
                 method.setAccessible(true);
-                value = method.invoke(field, null);
+                value = method.invoke(result,  null);
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
@@ -89,6 +87,17 @@ public class EntityMate<T> {
 
     void setIdEntity(EntityField idEntity) {
         this.idEntity = idEntity;
+    }
+
+    @Override
+    public String toString() {
+        return "EntityMate{" +
+                "clazz=" + clazz +
+                ", tableName='" + tableName + '\'' +
+                ", hasId=" + hasId +
+                ", idEntity=" + idEntity +
+                ", fields=" + fields +
+                '}';
     }
 }
 

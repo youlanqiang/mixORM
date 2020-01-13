@@ -12,10 +12,7 @@ mixORM是为了解决我在工作中遇到问题所编写的一种无规范，0�
 
 ## database support
 * [x] mysql5.7及以上
-* [ ] h2
-* [ ] sql server
 * [ ] oracle
-* [ ] MariaDB
 * [ ] Postgre SQL
 
 ## 架构图

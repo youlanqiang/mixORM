@@ -3,6 +3,7 @@ package top.youlanqiang.mixorm.mate;
 import top.youlanqiang.mixorm.annotation.DbColumn;
 import top.youlanqiang.mixorm.annotation.DbId;
 import top.youlanqiang.mixorm.annotation.DbName;
+import top.youlanqiang.mixorm.exceptions.ParseEntityException;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -12,8 +13,8 @@ class TableAbstractClassParser<T> extends AbstractClassParser<T> {
 
     TableAbstractClassParser(Class<T> clazz){
         super(clazz);
-        if(needParse(clazz)){
-            throw new RuntimeException("Class no DbName annotation.");
+        if(!needParse(clazz)){
+            throw new ParseEntityException("对象没有设置DbName注解.");
         }
     }
 
@@ -57,7 +58,7 @@ class TableAbstractClassParser<T> extends AbstractClassParser<T> {
     }
 
     private boolean needParse(Class<T> clazz){
-        return clazz.getDeclaredAnnotation(DbName.class) != null;
+        return clazz.getAnnotation(DbName.class) != null;
     }
 
     private boolean needParse(Field field) {

@@ -2,6 +2,7 @@ package top.youlanqiang.mixorm.mate;
 
 import top.youlanqiang.mixorm.annotation.DbColumn;
 import top.youlanqiang.mixorm.annotation.DbId;
+import top.youlanqiang.mixorm.exceptions.ParseEntityException;
 
 import java.lang.reflect.Field;
 
@@ -10,16 +11,17 @@ class TableAbstractFieldParser extends AbstractFieldParser {
     TableAbstractFieldParser(Field field) {
         super(field);
         if (!needParse(field)) {
-            throw new RuntimeException("Field not DbField or DbId annotation.");
+            throw new ParseEntityException("字段没有DbField或者DbId注解.");
         }
     }
 
     @Override
     void loadIsId(Field field, EntityField result) {
         DbId dbId = field.getAnnotation(DbId.class);
-        result.setId(true);
-        result.setIdType(dbId.type());
-
+        if(dbId != null){
+            result.setId(true);
+            result.setIdType(dbId.type());
+        }
     }
 
     @Override

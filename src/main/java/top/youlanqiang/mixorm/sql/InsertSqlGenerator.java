@@ -16,6 +16,9 @@ public interface InsertSqlGenerator extends SqlGenerator {
      * @return SqlGenerator
      */
     static InsertSqlGenerator create(DataBase dataBase){
+        if(dataBase == null){
+            throw new SqlGeneratorException("数据库未定义.");
+        }
         if(DataBase.MYSQL == dataBase){
             return new MysqlInsertSqlGenerator();
         }
