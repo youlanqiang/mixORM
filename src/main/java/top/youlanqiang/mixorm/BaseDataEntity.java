@@ -1,5 +1,6 @@
 package top.youlanqiang.mixorm;
 
+import top.youlanqiang.mixorm.annotation.IdType;
 import top.youlanqiang.mixorm.domain.DataEntity;
 import top.youlanqiang.mixorm.domain.PageEntity;
 import top.youlanqiang.mixorm.domain.SimplePageEntity;
@@ -60,7 +61,14 @@ class BaseDataEntity<T> implements DataEntity<T> {
         InsertSqlGenerator sqlGenerator = InsertSqlGenerator.create(dataBase)
                 .insertInto(entityMate.getTableName())
                 .fields(new ArrayList<>(variable.keySet())).values(variable.values());
-        QueryMapper.InsertResult result = queryMapper.insert(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams(), entityMate.isHasId());
+
+        //判断是否存在自增主键
+        boolean hasGeneratedKey = false;
+        if(entityMate.isHasId() && entityMate.getIdEntity().getIdType() == IdType.INCREMENT){
+            hasGeneratedKey = true;
+        }
+
+        QueryMapper.InsertResult result = queryMapper.insert(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams(), hasGeneratedKey);
         return result.getCount();
     }
 

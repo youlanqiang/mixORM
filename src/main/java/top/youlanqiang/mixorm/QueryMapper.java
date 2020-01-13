@@ -115,7 +115,7 @@ class QueryMapper<T> {
         return t;
     }
 
-    InsertResult insert(Connection conn, String sql, List<Object> param, boolean hasKey) {
+    InsertResult insert(Connection conn, String sql, List<Object> param, boolean hasGeneratedKey) {
 
 
         before(sql, param);
@@ -125,7 +125,7 @@ class QueryMapper<T> {
         ResultSet resultSet = null;
 
         try {
-            if (hasKey) {
+            if (hasGeneratedKey) {
                 statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             } else {
                 statement = conn.prepareStatement(sql);
@@ -136,7 +136,7 @@ class QueryMapper<T> {
                 }
             }
             int count = statement.executeUpdate();
-            if (hasKey) {
+            if (hasGeneratedKey) {
                 resultSet = statement.getGeneratedKeys();
                 if (resultSet.next()) {
                     Object key = resultSet.getObject(1);
