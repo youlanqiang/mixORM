@@ -3,6 +3,9 @@ package top.youlanqiang.mixorm.toolkit;
 import java.util.Collection;
 import java.util.Iterator;
 
+/**
+ * @author youlanqiang
+ */
 public final class StringUtils {
 
     public static String foreach(String open, String close, String separator, Collection collection){

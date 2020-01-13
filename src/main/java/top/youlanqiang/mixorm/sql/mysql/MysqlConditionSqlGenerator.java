@@ -8,6 +8,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+
+/**
+ * @author youlanqiang
+ */
 public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
 
     private StringBuilder sql;

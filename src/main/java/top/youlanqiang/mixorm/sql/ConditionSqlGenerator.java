@@ -7,16 +7,22 @@ import top.youlanqiang.mixorm.sql.mysql.MysqlConditionSqlGenerator;
 import java.util.Collection;
 import java.util.List;
 
+
+/**
+ * @author youlanqiang
+ */
 public interface ConditionSqlGenerator extends SqlGenerator {
 
     /**
-     * @return 返回对应数据库的SqlGenerator, 默认为mysql
+     * 返回对应数据库的SqlGenerator
+     * @param dataBase 数据库类型
+     * @return SqlGenerator
      */
-    static ConditionSqlGenerator create(String productName) {
-        if(productName.equals("MySQL")){
+    static ConditionSqlGenerator create(DataBase dataBase) {
+        if(DataBase.MYSQL == dataBase){
             return new MysqlConditionSqlGenerator();
         }
-        throw new SqlGeneratorException("未支持的数据库类型:" + productName);
+        throw new SqlGeneratorException("未支持的数据库类型:" + dataBase);
     }
 
     ConditionSqlGenerator and();
@@ -75,5 +81,6 @@ public interface ConditionSqlGenerator extends SqlGenerator {
 
     ConditionSqlGenerator limit(Integer offset);
 
+    @Override
     List<Object> getParams();
 }

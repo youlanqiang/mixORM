@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 
 /**
  * 字段ID
+ * @author  youlanqiang
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

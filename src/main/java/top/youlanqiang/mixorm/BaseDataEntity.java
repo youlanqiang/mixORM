@@ -14,6 +14,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
 
+/**
+ * @author youlanqiang
+ */
 class BaseDataEntity<T> implements DataEntity<T> {
 
     private final QueryMapper<T> queryMapper;
@@ -79,21 +82,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
     @Override
     public Integer deleteByMap(Map<String, Object> map) {
         ConditionSqlGenerator condition = ConditionSqlGenerator.create(productName);
-
-        /*
-          这段代码的逻辑是保证 SqlGenerator，
-          最后生成的 sql 结尾不会带 and.
-         */
-        Set<String> keys = map.keySet();
-        Iterator<String> iterator = keys.iterator();
-        while (iterator.hasNext()) {
-            String key = iterator.next();
-            condition.eq(key, map.get(key));
-            if (iterator.hasNext()) {
-                condition.and();
-            }
-        }
-
+        setMapToConditionSql(map, condition);
         return deleteByCondition(condition);
     }
 
@@ -171,19 +160,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
     @Override
     public List<T> selectByMap(Map<String, Object> map) {
         ConditionSqlGenerator condition = ConditionSqlGenerator.create(productName);
-         /*
-          这段代码的逻辑是保证 SqlGenerator，
-          最后生成的 sql 结尾不会带 and.
-         */
-        Set<String> keys = map.keySet();
-        Iterator<String> iterator = keys.iterator();
-        while (iterator.hasNext()) {
-            String key = iterator.next();
-            condition.eq(key, map.get(key));
-            if (iterator.hasNext()) {
-                condition.and();
-            }
-        }
+        setMapToConditionSql(map, condition);
         return selectList(condition);
     }
 
@@ -225,6 +202,26 @@ class BaseDataEntity<T> implements DataEntity<T> {
         List<T> list = selectList(sql);
         pageEntity.setList(list);
         return pageEntity;
+    }
+
+
+
+    /**
+     * 这段代码的逻辑是保证 SqlGenerator，
+     * 最后生成的 sql 结尾不会带 and.
+     * @param map 条件map
+     * @param condition ConditionSqlGenerator
+     */
+    private void setMapToConditionSql(Map<String, Object> map ,final ConditionSqlGenerator condition){
+        Set<String> keys = map.keySet();
+        Iterator<String> iterator = keys.iterator();
+        while (iterator.hasNext()) {
+            String key = iterator.next();
+            condition.eq(key, map.get(key));
+            if (iterator.hasNext()) {
+                condition.and();
+            }
+        }
     }
 
 

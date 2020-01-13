@@ -7,7 +7,9 @@ import top.youlanqiang.mixorm.sql.UpdateSqlGenerator;
 import java.util.LinkedList;
 import java.util.List;
 
-
+/**
+ * @author youlanqiang
+ */
 public class MysqlUpdateSqlGenerator implements UpdateSqlGenerator {
 
     private StringBuilder sql;

@@ -1,5 +1,8 @@
 package top.youlanqiang.mixorm.exceptions;
 
+/**
+ * @author youlanqiang
+ */
 public class SqlGeneratorException extends RuntimeException {
 
     public SqlGeneratorException(){

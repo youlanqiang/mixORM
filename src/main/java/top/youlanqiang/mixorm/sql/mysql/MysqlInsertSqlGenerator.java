@@ -7,6 +7,9 @@ import top.youlanqiang.mixorm.toolkit.StringUtils;
 
 import java.util.*;
 
+/**
+ * @author youlanqiang
+ */
 public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
 
     private StringBuilder sql;

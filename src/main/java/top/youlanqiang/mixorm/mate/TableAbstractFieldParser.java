@@ -5,9 +5,9 @@ import top.youlanqiang.mixorm.annotation.DbId;
 
 import java.lang.reflect.Field;
 
-class TableFieldParser extends FieldParser {
+class TableAbstractFieldParser extends AbstractFieldParser {
 
-    TableFieldParser(Field field) {
+    TableAbstractFieldParser(Field field) {
         super(field);
         if (!needParse(field)) {
             throw new RuntimeException("Field not DbField or DbId annotation.");

@@ -2,14 +2,14 @@ package top.youlanqiang.mixorm.mate;
 
 import java.lang.reflect.Field;
 
-abstract class FieldParser {
+abstract class AbstractFieldParser {
 
 
     private Field field;
 
     private EntityField result;
 
-    FieldParser(Field field){
+    AbstractFieldParser(Field field){
         this.field = field;
         this.result = new EntityField();
     }

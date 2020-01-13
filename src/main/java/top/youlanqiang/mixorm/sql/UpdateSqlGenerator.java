@@ -6,16 +6,21 @@ import top.youlanqiang.mixorm.sql.mysql.MysqlUpdateSqlGenerator;
 
 import java.util.List;
 
+/**
+ * @author youlanqiang
+ */
 public interface UpdateSqlGenerator extends SqlGenerator {
 
     /**
-     * @return 默认使用MysqlUpdateSqlGenerator
+     * 返回对应数据库的SqlGenerator
+     * @param dataBase 数据库类型
+     * @return SqlGenerator
      */
-    static UpdateSqlGenerator create(String productName){
-        if(productName.equals("MySQL")){
+    static UpdateSqlGenerator create(DataBase dataBase){
+        if(DataBase.MYSQL == dataBase){
             return new MysqlUpdateSqlGenerator();
         }
-        throw new SqlGeneratorException("未支持的数据库类型:" + productName);
+        throw new SqlGeneratorException("未支持的数据库类型:" + dataBase);
     }
 
     UpdateSqlGenerator update(String tableName);
@@ -24,5 +29,6 @@ public interface UpdateSqlGenerator extends SqlGenerator {
 
     UpdateSqlGenerator where(ConditionSqlGenerator conditionSqlGenerator);
 
+    @Override
     List<Object> getParams();
 }

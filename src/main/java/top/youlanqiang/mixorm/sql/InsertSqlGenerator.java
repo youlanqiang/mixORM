@@ -1,22 +1,25 @@
 package top.youlanqiang.mixorm.sql;
 
 import top.youlanqiang.mixorm.exceptions.SqlGeneratorException;
-import top.youlanqiang.mixorm.sql.mysql.MysqlDeleteSqlGenerator;
 import top.youlanqiang.mixorm.sql.mysql.MysqlInsertSqlGenerator;
 
-import java.util.Collection;
 import java.util.List;
 
+/**
+ * @author Administrator
+ */
 public interface InsertSqlGenerator extends SqlGenerator {
 
     /**
-     * @return 默认使用MysqlInsertSqlGenerator
+     * 返回对应数据库的SqlGenerator
+     * @param dataBase 数据库类型
+     * @return SqlGenerator
      */
-    static InsertSqlGenerator create(String productName){
-        if(productName.equals("MySQL")){
+    static InsertSqlGenerator create(DataBase dataBase){
+        if(DataBase.MYSQL == dataBase){
             return new MysqlInsertSqlGenerator();
         }
-        throw new SqlGeneratorException("未支持的数据库类型:" + productName);
+        throw new SqlGeneratorException("未支持的数据库类型:" + dataBase);
     }
 
     InsertSqlGenerator insertInto(String tableName);
@@ -31,6 +34,7 @@ public interface InsertSqlGenerator extends SqlGenerator {
 
     InsertSqlGenerator oneItem(List<Object> values);
 
+    @Override
     List<Object> getParams();
 
 }

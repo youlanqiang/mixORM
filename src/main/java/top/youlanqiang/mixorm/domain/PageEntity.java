@@ -2,6 +2,9 @@ package top.youlanqiang.mixorm.domain;
 
 import java.util.List;
 
+/**
+ * @author youlanqiang
+ */
 public interface PageEntity<T> {
 
     Integer getTotal();

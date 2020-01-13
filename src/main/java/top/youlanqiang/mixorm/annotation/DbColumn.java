@@ -7,7 +7,8 @@ import java.lang.annotation.Target;
 
 
 /**
- * 字段名
+ * 数据库字段名
+ * @author youlanqiang
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

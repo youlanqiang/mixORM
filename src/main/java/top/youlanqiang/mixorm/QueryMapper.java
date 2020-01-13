@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author youlanqiang
+ */
 class QueryMapper<T> {
 
 
@@ -177,9 +180,15 @@ class QueryMapper<T> {
 
     public void close(Connection conn, Statement state, ResultSet rs) {
         try {
-            if (rs != null) rs.close();
-            if (state != null) state.close();
-            if (conn != null && !conn.isClosed()) conn.close();
+            if (rs != null) {
+                rs.close();
+            }
+            if (state != null) {
+                state.close();
+            }
+            if (conn != null && !conn.isClosed()) {
+                conn.close();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -195,8 +204,8 @@ class QueryMapper<T> {
         Class<T> tClass = mate.getClazz();
         T result = null;
         try {
-            Constructor<T> constructor = tClass.getConstructor(null);
-            result = constructor.newInstance(null);
+            Constructor<T> constructor = tClass.getConstructor((Class<?>) null);
+            result = constructor.newInstance((Object) null);
             EntityField id = mate.getIdEntity();
             Method idMethod = tClass.getMethod(id.getSetMethod(), id.getColumnType());
             idMethod.invoke(result, resultSet.getObject(id.getColumnName()));

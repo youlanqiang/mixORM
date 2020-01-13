@@ -6,6 +6,9 @@ import top.youlanqiang.mixorm.sql.DeleteSqlGenerator;
 
 import java.util.List;
 
+/**
+ * @author youlanqiang
+ */
 public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 
     private StringBuilder sql;

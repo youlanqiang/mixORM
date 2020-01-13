@@ -2,6 +2,9 @@ package top.youlanqiang.mixorm.domain;
 
 import java.util.List;
 
+/**
+ * @author youlanqiang
+ */
 public class SimplePageEntity<T> implements PageEntity<T>{
 
     private Integer total;

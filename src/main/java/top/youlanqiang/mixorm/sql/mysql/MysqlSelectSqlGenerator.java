@@ -8,6 +8,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * @author youlanqiang
+ */
 public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 
     private StringBuilder sql;

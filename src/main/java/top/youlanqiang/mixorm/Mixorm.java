@@ -1,15 +1,18 @@
 package top.youlanqiang.mixorm;
 
+import top.youlanqiang.mixorm.domain.DataEntity;
+
+/**
+ * @author youlanqiang
+ */
 public final class Mixorm {
 
     private MixormConfig mixormConfig;
 
     private Mixorm(){}
 
-    public static final String VERSION = "1.0.0_alpha";
-
     public static Mixorm getInstance(){
-        return InnerObject.mixorm;
+        return InnerObject.MIXORM;
     }
 
     public Mixorm config(MixormConfig config){
@@ -22,14 +25,14 @@ public final class Mixorm {
     }
 
 
-    public <T> BaseDataEntity<T> create(Class<T> clazz){
+    public <T> DataEntity<T> create(Class<T> clazz){
         return new BaseDataEntity<>(clazz);
     }
 
 
 
     private static class InnerObject{
-        private static final Mixorm mixorm = new Mixorm();
+        private static final Mixorm MIXORM = new Mixorm();
     }
 
 

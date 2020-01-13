@@ -8,9 +8,9 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-class TableClassParser<T> extends ClassParser<T> {
+class TableAbstractClassParser<T> extends AbstractClassParser<T> {
 
-    TableClassParser(Class<T> clazz){
+    TableAbstractClassParser(Class<T> clazz){
         super(clazz);
         if(needParse(clazz)){
             throw new RuntimeException("Class no DbName annotation.");
@@ -28,7 +28,7 @@ class TableClassParser<T> extends ClassParser<T> {
         Map<String, EntityField> map = new HashMap<>(fields.length);
         for(Field field : fields){
             if(needParse(field)){
-                FieldParser parser = new TableFieldParser(field);
+                AbstractFieldParser parser = new TableAbstractFieldParser(field);
                 EntityField entityField = parser.getEntityField();
                 map.put( entityField.getColumnName(), entityField);
             }

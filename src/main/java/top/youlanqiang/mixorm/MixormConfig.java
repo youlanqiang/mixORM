@@ -1,5 +1,8 @@
 package top.youlanqiang.mixorm;
 
+/**
+ * @author youlanqiang
+ */
 public class MixormConfig {
 
     private boolean debug;

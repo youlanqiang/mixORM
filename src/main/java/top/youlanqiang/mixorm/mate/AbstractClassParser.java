@@ -1,13 +1,13 @@
 package top.youlanqiang.mixorm.mate;
 
 
-abstract class  ClassParser<T> {
+abstract class AbstractClassParser<T> {
 
     private Class<T> clazz;
 
     private EntityMate result;
 
-    ClassParser(Class<T> clazz){
+    AbstractClassParser(Class<T> clazz){
         this.clazz = clazz;
         this.result = new EntityMate();
     }

@@ -5,10 +5,12 @@ import top.youlanqiang.mixorm.sql.ConditionSqlGenerator;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author youlanqiang
+ */
 public interface DataEntity<T> {
 
     /**
