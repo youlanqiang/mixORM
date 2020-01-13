@@ -18,12 +18,12 @@ class TableAbstractClassParser<T> extends AbstractClassParser<T> {
     }
 
     @Override
-    void loadClass(Class<T> clazz, EntityMate mate) {
+    void loadClass(Class<T> clazz, EntityMate<T> mate) {
         mate.setClazz(clazz);
     }
 
     @Override
-    void loadFields(Class<T> clazz, EntityMate mate) {
+    void loadFields(Class<T> clazz, EntityMate<T> mate) {
         Field[] fields = clazz.getDeclaredFields();
         Map<String, EntityField> map = new HashMap<>(fields.length);
         for(Field field : fields){
@@ -38,13 +38,13 @@ class TableAbstractClassParser<T> extends AbstractClassParser<T> {
     }
 
     @Override
-    void loadTableName(Class<T> clazz, EntityMate mate) {
+    void loadTableName(Class<T> clazz, EntityMate<T> mate) {
         DbName dbName = clazz.getAnnotation(DbName.class);
         mate.setTableName(dbName.value());
     }
 
     @Override
-    void loadHasId(Class<T> clazz, EntityMate mate) {
+    void loadHasId(Class<T> clazz, EntityMate<T> mate) {
         Map<String, EntityField> map =  mate.getFields();
         for (String key : map.keySet()) {
             EntityField field = map.get(key);

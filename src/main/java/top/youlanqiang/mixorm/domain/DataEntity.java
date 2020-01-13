@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 该接口用来定义对象与数据库的基本操作
  * @author youlanqiang
  */
 public interface DataEntity<T> {
@@ -17,6 +18,7 @@ public interface DataEntity<T> {
      * 使用一个数据源
      * @param dataSource 数据源
      * @return dataEntity
+     * @throws SQLException dataSource获取Connection异常
      */
     DataEntity<T> source(DataSource dataSource) throws SQLException;
 
@@ -25,6 +27,7 @@ public interface DataEntity<T> {
      * 该连接会自动关闭
      * @param connection 一个连接
      * @return dataEntity对象
+     * @throws SQLException Connection异常
      */
     DataEntity<T> use(Connection connection) throws SQLException;
 

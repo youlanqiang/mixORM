@@ -6,7 +6,7 @@ import top.youlanqiang.mixorm.sql.mysql.MysqlInsertSqlGenerator;
 import java.util.List;
 
 /**
- * @author Administrator
+ * @author youlanqiang
  */
 public interface InsertSqlGenerator extends SqlGenerator {
 
@@ -22,18 +22,45 @@ public interface InsertSqlGenerator extends SqlGenerator {
         throw new SqlGeneratorException("未支持的数据库类型:" + dataBase);
     }
 
+    /**
+     * 设置插入数据的表名
+     * @param tableName 表名
+     * @return this
+     */
     InsertSqlGenerator insertInto(String tableName);
 
+    /**
+     * 设置字段
+     * @param columns 数据库字段
+     * @return this
+     */
     InsertSqlGenerator fields(String... columns);
 
+    /**
+     * 设置字段
+     * @param columns 字段的list
+     * @return this
+     */
     InsertSqlGenerator fields(List<String> columns);
 
-    InsertSqlGenerator values();
+    /**
+     * 将数据插入insertSqlGenerator中
+     * @param values value
+     * @return this
+     */
+    InsertSqlGenerator values(Object... values);
 
-    InsertSqlGenerator oneItem(Object... values);
+    /**
+     * 将数据插入insertSqlGenerator中
+     * @param values value
+     * @return this
+     */
+    InsertSqlGenerator values(List<Object> values);
 
-    InsertSqlGenerator oneItem(List<Object> values);
-
+    /**
+     * 返回params参数集合
+     * @return 参数集合
+     */
     @Override
     List<Object> getParams();
 

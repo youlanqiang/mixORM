@@ -27,7 +27,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
 
     private DataSource dataSource;
 
-    private String productName;
+    private DataBase dataBase;
 
     public BaseDataEntity(Class<T> clazz) {
         EntityMate<T> mate = EntityMateContainer.getInstance().get(clazz);
@@ -40,7 +40,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
         this.dataSource = dataSource;
         //获取数据库厂商名称
         try(Connection connection = dataSource.getConnection()){
-            this.productName = connection.getMetaData().getDatabaseProductName();
+            this.dataBase = DataBase.valueOf(connection.getMetaData().getDatabaseProductName());
         }
         return this;
     }
@@ -50,16 +50,16 @@ class BaseDataEntity<T> implements DataEntity<T> {
     public DataEntity<T> use(Connection connection) throws SQLException {
         this.connection = connection;
         //获取数据库厂商名称
-        this.productName = connection.getMetaData().getDatabaseProductName();
+        this.dataBase = DataBase.valueOf(connection.getMetaData().getDatabaseProductName());
         return this;
     }
 
     @Override
     public Integer insert(T entity) {
         Map<String, Object> variable = entityMate.getVariableSkipNull(entity);
-        InsertSqlGenerator sqlGenerator = InsertSqlGenerator.create(productName)
+        InsertSqlGenerator sqlGenerator = InsertSqlGenerator.create(dataBase)
                 .insertInto(entityMate.getTableName())
-                .fields(new ArrayList<>(variable.keySet())).values().oneItem(variable.values());
+                .fields(new ArrayList<>(variable.keySet())).values(variable.values());
         QueryMapper.InsertResult result = queryMapper.insert(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams(), entityMate.isHasId());
         return result.getCount();
     }
@@ -68,9 +68,9 @@ class BaseDataEntity<T> implements DataEntity<T> {
     public Integer deleteById(Object id) {
         if (entityMate.isHasId()) {
 
-            DeleteSqlGenerator sqlGenerator = DeleteSqlGenerator.create(productName)
+            DeleteSqlGenerator sqlGenerator = DeleteSqlGenerator.create(dataBase)
                     .deleteForm(entityMate.getTableName())
-                    .where(ConditionSqlGenerator.create(productName).eq(entityMate.getIdEntity().getColumnName(), id));
+                    .where(ConditionSqlGenerator.create(dataBase).eq(entityMate.getIdEntity().getColumnName(), id));
             return queryMapper.executeToUpdate(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
 
         } else {
@@ -81,7 +81,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
 
     @Override
     public Integer deleteByMap(Map<String, Object> map) {
-        ConditionSqlGenerator condition = ConditionSqlGenerator.create(productName);
+        ConditionSqlGenerator condition = ConditionSqlGenerator.create(dataBase);
         setMapToConditionSql(map, condition);
         return deleteByCondition(condition);
     }
@@ -89,7 +89,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
     @Override
     public Integer deleteBatchIds(List<Object> idList) {
         if (entityMate.isHasId()) {
-            ConditionSqlGenerator condition = ConditionSqlGenerator.create(productName)
+            ConditionSqlGenerator condition = ConditionSqlGenerator.create(dataBase)
                     .in(entityMate.getIdEntity().getColumnName(), idList);
             return deleteByCondition(condition);
         } else {
@@ -99,7 +99,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
 
     @Override
     public Integer deleteByCondition(ConditionSqlGenerator sql) {
-        DeleteSqlGenerator sqlGenerator = DeleteSqlGenerator.create(productName)
+        DeleteSqlGenerator sqlGenerator = DeleteSqlGenerator.create(dataBase)
                 .deleteForm(entityMate.getTableName()).where(sql);
         return queryMapper.executeToUpdate(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
     }
@@ -108,7 +108,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
     @Override
     public Integer updateById(T entity) {
         if (entityMate.isHasId()) {
-            UpdateSqlGenerator sqlGenerator = UpdateSqlGenerator.create(productName)
+            UpdateSqlGenerator sqlGenerator = UpdateSqlGenerator.create(dataBase)
                     .update(entityMate.getTableName());
             Map<String, Object> variables = entityMate.getVariableSkipNull(entity);
             variables.forEach(sqlGenerator::set);
@@ -121,7 +121,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
 
     @Override
     public Integer update(T entity, ConditionSqlGenerator sql) {
-        UpdateSqlGenerator sqlGenerator = UpdateSqlGenerator.create(productName)
+        UpdateSqlGenerator sqlGenerator = UpdateSqlGenerator.create(dataBase)
                 .update(entityMate.getTableName());
         Map<String, Object> variables = entityMate.getVariableSkipNull(entity);
         variables.forEach(sqlGenerator::set);
@@ -132,7 +132,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
     @Override
     public T selectById(Object id) {
         if (entityMate.isHasId()) {
-            ConditionSqlGenerator condition = ConditionSqlGenerator.create(productName).eq(entityMate.getIdEntity().getColumnName(), id);
+            ConditionSqlGenerator condition = ConditionSqlGenerator.create(dataBase).eq(entityMate.getIdEntity().getColumnName(), id);
             return selectOne(condition);
         } else {
             throw new SqlGeneratorException("对象没有设置主键.");
@@ -141,7 +141,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
 
     @Override
     public T selectOne(ConditionSqlGenerator sql) {
-        SelectSqlGenerator sqlGenerator = SelectSqlGenerator.create(productName)
+        SelectSqlGenerator sqlGenerator = SelectSqlGenerator.create(dataBase)
                 .select(entityMate.getFields().keySet())
                 .from(entityMate.getTableName())
                 .where(sql);
@@ -150,7 +150,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
 
     @Override
     public Integer selectCount(ConditionSqlGenerator sql) {
-        SelectSqlGenerator sqlGenerator = SelectSqlGenerator.create(productName)
+        SelectSqlGenerator sqlGenerator = SelectSqlGenerator.create(dataBase)
                 .select(" COUNT(*) ")
                 .from(entityMate.getTableName())
                 .where(sql);
@@ -159,7 +159,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
 
     @Override
     public List<T> selectByMap(Map<String, Object> map) {
-        ConditionSqlGenerator condition = ConditionSqlGenerator.create(productName);
+        ConditionSqlGenerator condition = ConditionSqlGenerator.create(dataBase);
         setMapToConditionSql(map, condition);
         return selectList(condition);
     }
@@ -167,7 +167,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
 
     @Override
     public List<T> selectList(ConditionSqlGenerator sql) {
-        SelectSqlGenerator sqlGenerator = SelectSqlGenerator.create(productName)
+        SelectSqlGenerator sqlGenerator = SelectSqlGenerator.create(dataBase)
                 .select(entityMate.getFields().keySet())
                 .from(entityMate.getTableName())
                 .where(sql);
@@ -181,7 +181,7 @@ class BaseDataEntity<T> implements DataEntity<T> {
         Integer count = selectCount(null);
         pageEntity.setTotal(count);
 
-        ConditionSqlGenerator condition = ConditionSqlGenerator.create(productName)
+        ConditionSqlGenerator condition = ConditionSqlGenerator.create(dataBase)
                 .limit( (current - 1) * size, size);
         List<T> list = selectList(condition);
         pageEntity.setList(list);

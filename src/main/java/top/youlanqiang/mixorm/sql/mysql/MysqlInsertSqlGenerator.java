@@ -41,27 +41,19 @@ public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
     }
 
     @Override
-    public InsertSqlGenerator values() {
+    public InsertSqlGenerator values(Object... values) {
         this.sql.append(" VALUES ");
+        this.oneItem(values);
         return this;
     }
 
     @Override
-    public InsertSqlGenerator oneItem(Object... values) {
-        return oneItem(Arrays.asList(values));
-    }
-
-    @Override
-    public InsertSqlGenerator oneItem(List<Object> values) {
-        this.params = values;
-        if(!batch) {
-            this.sql.append(StringUtils.foreachByMark("(", ")", ",", values.size(), "?"));
-            batch = true;
-        }else{
-            throw new SqlGeneratorException();
-        }
+    public InsertSqlGenerator values(List<Object> values){
+        this.sql.append(" VALUES ");
+        this.oneItem(values);
         return this;
     }
+
 
     @Override
     public List<Object> getParams() {
@@ -79,4 +71,20 @@ public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
         return sql.toString();
     }
 
+
+    private InsertSqlGenerator oneItem(Object... values) {
+        return oneItem(Arrays.asList(values));
+    }
+
+
+    private InsertSqlGenerator oneItem(List<Object> values) {
+        this.params = values;
+        if(!batch) {
+            this.sql.append(StringUtils.foreachByMark("(", ")", ",", values.size(), "?"));
+            batch = true;
+        }else{
+            throw new SqlGeneratorException();
+        }
+        return this;
+    }
 }
