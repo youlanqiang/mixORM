@@ -15,7 +15,6 @@ mixORM是为了解决我在工作中遇到问题所编写的一种无规范，0�
 * [ ] sql server
 * [ ] oracle
 * [ ] MariaDB
-* [ ] MariaDB
 * [ ] Postgre SQL
 
 ## 架构图

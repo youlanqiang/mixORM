@@ -14,8 +14,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
 
-
-//todo 待完成BaseDataEntity的所有功能
 class BaseDataEntity<T> implements DataEntity<T> {
 
     private final QueryMapper<T> queryMapper;
