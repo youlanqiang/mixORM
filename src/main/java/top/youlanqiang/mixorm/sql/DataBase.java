@@ -9,7 +9,7 @@ public enum DataBase {
     /**
      * mysql5.7及以上数据库
      */
-    MYSQL,
+    MySQL,
     /**
      * h2数据库
      */

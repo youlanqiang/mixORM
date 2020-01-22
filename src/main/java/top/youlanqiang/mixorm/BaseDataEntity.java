@@ -57,18 +57,30 @@ class BaseDataEntity<T> implements DataEntity<T> {
 
     @Override
     public Integer insert(T entity) {
-        Map<String, Object> variable = entityMate.getVariableSkipNull(entity);
         InsertSqlGenerator sqlGenerator = InsertSqlGenerator.create(dataBase)
-                .insertInto(entityMate.getTableName())
-                .fields(new ArrayList<>(variable.keySet())).values(variable.values());
+                .insertInto(entityMate.getTableName());
 
         //判断是否存在自增主键
-        boolean hasGeneratedKey = false;
+
+        QueryMapper.InsertResult result = null;
+
         if(entityMate.isHasId() && entityMate.getIdEntity().getIdType() == IdType.INCREMENT){
-            hasGeneratedKey = true;
+            //存在自增主键，则在插入字段中不包含主键
+
+            Map<String, Object> variable = entityMate.getVariableSkipNullAndId(entity);
+            sqlGenerator.fields(new ArrayList<>(variable.keySet())).values(new ArrayList<>(variable.values()));
+            result = queryMapper.insert(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams(),
+                    true, entityMate.getIdEntity().getColumnType());
+
+            entityMate.autowiredKey(result.getKey(), entity);
+        }else{
+
+            Map<String, Object> variable = entityMate.getVariableSkipNull(entity);
+            sqlGenerator.fields(new ArrayList<>(variable.keySet())).values(new ArrayList<>(variable.values()));
+            result = queryMapper.insert(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams(), false, null);
+
         }
 
-        QueryMapper.InsertResult result = queryMapper.insert(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams(), hasGeneratedKey);
         return result.getCount();
     }
 

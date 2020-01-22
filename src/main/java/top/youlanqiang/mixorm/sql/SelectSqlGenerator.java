@@ -18,7 +18,7 @@ public interface SelectSqlGenerator extends SqlGenerator {
      * @return SqlGenerator
      */
     static SelectSqlGenerator create(DataBase dataBase){
-        if(DataBase.MYSQL == dataBase){
+        if(DataBase.MySQL == dataBase){
             return new MysqlSelectSqlGenerator();
         }
         throw new SqlGeneratorException("未支持的数据库类型:" + dataBase);

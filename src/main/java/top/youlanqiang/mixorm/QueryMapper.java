@@ -115,7 +115,7 @@ class QueryMapper<T> {
         return t;
     }
 
-    InsertResult insert(Connection conn, String sql, List<Object> param, boolean hasGeneratedKey) {
+    InsertResult insert(Connection conn, String sql, List<Object> param, boolean hasGeneratedKey, Class idClass) {
 
 
         before(sql, param);
@@ -139,7 +139,7 @@ class QueryMapper<T> {
             if (hasGeneratedKey) {
                 resultSet = statement.getGeneratedKeys();
                 if (resultSet.next()) {
-                    Object key = resultSet.getObject(1);
+                    Object key = resultSet.getObject(1, idClass);
                     return new InsertResult(count, key);
                 }
             }

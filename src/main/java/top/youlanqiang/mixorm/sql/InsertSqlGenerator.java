@@ -19,7 +19,7 @@ public interface InsertSqlGenerator extends SqlGenerator {
         if(dataBase == null){
             throw new SqlGeneratorException("数据库未定义.");
         }
-        if(DataBase.MYSQL == dataBase){
+        if(DataBase.MySQL == dataBase){
             return new MysqlInsertSqlGenerator();
         }
         throw new SqlGeneratorException("未支持的数据库类型:" + dataBase);
@@ -32,12 +32,6 @@ public interface InsertSqlGenerator extends SqlGenerator {
      */
     InsertSqlGenerator insertInto(String tableName);
 
-    /**
-     * 设置字段
-     * @param columns 数据库字段
-     * @return this
-     */
-    InsertSqlGenerator fields(String... columns);
 
     /**
      * 设置字段
@@ -46,12 +40,6 @@ public interface InsertSqlGenerator extends SqlGenerator {
      */
     InsertSqlGenerator fields(List<String> columns);
 
-    /**
-     * 将数据插入insertSqlGenerator中
-     * @param values value
-     * @return this
-     */
-    InsertSqlGenerator values(Object... values);
 
     /**
      * 将数据插入insertSqlGenerator中

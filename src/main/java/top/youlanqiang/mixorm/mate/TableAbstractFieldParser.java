@@ -54,7 +54,7 @@ class TableAbstractFieldParser extends AbstractFieldParser {
     @Override
     void loadSetMethod(Field field, EntityField result) {
 
-        result.setGetMethod("set" + toFirstUpper(field.getName()));
+        result.setSetMethod("set" + toFirstUpper(field.getName()));
 
     }
 

@@ -19,7 +19,7 @@ public interface ConditionSqlGenerator extends SqlGenerator {
      * @return SqlGenerator
      */
     static ConditionSqlGenerator create(DataBase dataBase) {
-        if(DataBase.MYSQL == dataBase){
+        if(DataBase.MySQL == dataBase){
             return new MysqlConditionSqlGenerator();
         }
         throw new SqlGeneratorException("未支持的数据库类型:" + dataBase);

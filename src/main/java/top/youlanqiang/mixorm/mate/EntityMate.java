@@ -21,6 +21,23 @@ public class EntityMate<T> {
 
     private Map<String, EntityField> fields;
 
+
+    /**
+     * 实体对象注入主类
+     * @param keyValue 主键值
+     * @param t 实体对象
+     */
+    public void autowiredKey(Object keyValue, T t){
+        try {
+            EntityField idField = getIdEntity();
+            Method method  = clazz.getDeclaredMethod(idField.getSetMethod(), idField.getColumnType());
+            method.setAccessible(true);
+            method.invoke(t,  keyValue);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * 获取字段名和值，包含主键,不包含为null的字段
      * @param result 对象实体类
@@ -48,6 +65,29 @@ public class EntityMate<T> {
         return variable;
     }
 
+    /**
+     * 获取字段名和值,不包含为null的字段和主键的字段
+     * @param result 对象实体类
+     * @return 返回对象的字段名和值
+     */
+    public Map<String, Object> getVariableSkipNullAndId(T result){
+        List<EntityField> fields = new ArrayList<>(getFields().values());
+        Map<String, Object> variable = new HashMap<>(fields.size());
+        for (EntityField field : fields) {
+            Object value = null;
+            try {
+                Method method  = clazz.getDeclaredMethod(field.getGetMethod(),  null);
+                method.setAccessible(true);
+                value = method.invoke(result,  null);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+            if(value != null) {
+                variable.put(field.getColumnName(), value);
+            }
+        }
+        return variable;
+    }
 
     public Class<T> getClazz() {
         return clazz;

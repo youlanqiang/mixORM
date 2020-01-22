@@ -29,10 +29,7 @@ public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
         return this;
     }
 
-    @Override
-    public InsertSqlGenerator fields(String... columns) {
-        return fields(Arrays.asList(columns));
-    }
+
 
     @Override
     public InsertSqlGenerator fields(List<String> columns) {
@@ -40,12 +37,7 @@ public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
         return this;
     }
 
-    @Override
-    public InsertSqlGenerator values(Object... values) {
-        this.sql.append(" VALUES ");
-        this.oneItem(values);
-        return this;
-    }
+
 
     @Override
     public InsertSqlGenerator values(List<Object> values){
@@ -71,10 +63,6 @@ public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
         return sql.toString();
     }
 
-
-    private InsertSqlGenerator oneItem(Object... values) {
-        return oneItem(Arrays.asList(values));
-    }
 
 
     private InsertSqlGenerator oneItem(List<Object> values) {

@@ -1,7 +1,6 @@
 package top.youlanqiang.mixorm.sql;
 
 import top.youlanqiang.mixorm.exceptions.SqlGeneratorException;
-import top.youlanqiang.mixorm.sql.mysql.MysqlSelectSqlGenerator;
 import top.youlanqiang.mixorm.sql.mysql.MysqlUpdateSqlGenerator;
 
 import java.util.List;
@@ -17,7 +16,7 @@ public interface UpdateSqlGenerator extends SqlGenerator {
      * @return SqlGenerator
      */
     static UpdateSqlGenerator create(DataBase dataBase){
-        if(DataBase.MYSQL == dataBase){
+        if(DataBase.MySQL == dataBase){
             return new MysqlUpdateSqlGenerator();
         }
         throw new SqlGeneratorException("未支持的数据库类型:" + dataBase);
