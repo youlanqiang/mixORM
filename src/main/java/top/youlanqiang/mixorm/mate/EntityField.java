@@ -76,4 +76,17 @@ public class EntityField {
     void setIdType(IdType idType) {
         this.idType = idType;
     }
+
+    @Override
+    public String toString() {
+        return "EntityField{" +
+                "isId=" + isId +
+                ", columnName='" + columnName + '\'' +
+                ", fieldName='" + fieldName + '\'' +
+                ", idType=" + idType +
+                ", columnType=" + columnType +
+                ", setMethod='" + setMethod + '\'' +
+                ", getMethod='" + getMethod + '\'' +
+                '}';
+    }
 }

@@ -130,8 +130,14 @@ class BaseDataEntity<T> implements DataEntity<T> {
         if (entityMate.isHasId()) {
             UpdateSqlGenerator sqlGenerator = UpdateSqlGenerator.create(dataBase)
                     .update(entityMate.getTableName());
-            Map<String, Object> variables = entityMate.getVariableSkipNull(entity);
+
+            ConditionSqlGenerator conditionSql = ConditionSqlGenerator.create(dataBase);
+            conditionSql.eq(entityMate.getIdEntity().getColumnName(), entityMate.getPrimaryKeyValue(entity));
+
+            Map<String, Object> variables = entityMate.getVariableSkipNullAndId(entity);
             variables.forEach(sqlGenerator::set);
+
+            sqlGenerator.where(conditionSql);
             return queryMapper.executeToUpdate(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
         } else {
             throw new SqlGeneratorException("对象没有设置主键.");

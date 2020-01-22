@@ -23,6 +23,24 @@ public class EntityMate<T> {
 
 
     /**
+     * 获取主键value值
+     * @param t 实体对象
+     * @return 主键value值
+     */
+    public Object getPrimaryKeyValue(T t){
+        try {
+            EntityField idField = getIdEntity();
+            Method method  = clazz.getDeclaredMethod(idField.getGetMethod(), null);
+            method.setAccessible(true);
+            return method.invoke(t,  null);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /**
      * 实体对象注入主类
      * @param keyValue 主键值
      * @param t 实体对象
@@ -74,6 +92,9 @@ public class EntityMate<T> {
         List<EntityField> fields = new ArrayList<>(getFields().values());
         Map<String, Object> variable = new HashMap<>(fields.size());
         for (EntityField field : fields) {
+            if(field.isId()){
+                continue;
+            }
             Object value = null;
             try {
                 Method method  = clazz.getDeclaredMethod(field.getGetMethod(),  null);

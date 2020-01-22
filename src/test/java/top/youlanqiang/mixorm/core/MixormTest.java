@@ -60,4 +60,19 @@ public class MixormTest {
         System.out.println(user);
     }
 
+    @Test
+    @DisplayName("测试更新数据")
+    public void update() throws SQLException {
+        DataEntity<User> entity =  mixorm.create(User.class);
+        User user = new User();
+        user.setId(21);
+        user.setName("alex wang");
+        int result = entity.use(connection).updateById(user);
+        if(result == 1){
+            System.out.println("更新成功");
+        }else {
+            throw new RuntimeException("更新失败.");
+        }
+    }
+
 }
