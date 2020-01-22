@@ -52,5 +52,12 @@ public class MixormTest {
         }
     }
 
+    @Test
+    @DisplayName("测试查询数据")
+    public void select() throws SQLException{
+        DataEntity<User> entity =  mixorm.create(User.class);
+        User user = entity.use(connection).selectById(21);
+        System.out.println(user);
+    }
 
 }

@@ -204,8 +204,8 @@ class QueryMapper<T> {
         Class<T> tClass = mate.getClazz();
         T result = null;
         try {
-            Constructor<T> constructor = tClass.getConstructor((Class<?>) null);
-            result = constructor.newInstance((Object) null);
+            Constructor<T> constructor = tClass.getConstructor( null);
+            result = constructor.newInstance( null);
             EntityField id = mate.getIdEntity();
             Method idMethod = tClass.getMethod(id.getSetMethod(), id.getColumnType());
             idMethod.invoke(result, resultSet.getObject(id.getColumnName()));
@@ -214,7 +214,7 @@ class QueryMapper<T> {
             for (String key : fields.keySet()) {
                 EntityField field = fields.get(key);
                 Method method = tClass.getMethod(field.getSetMethod(), field.getColumnType());
-                idMethod.invoke(result, resultSet.getObject(field.getColumnName()));
+                method.invoke(result, resultSet.getObject(field.getColumnName()));
             }
 
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | SQLException e) {

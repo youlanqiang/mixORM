@@ -18,6 +18,9 @@ public interface SelectSqlGenerator extends SqlGenerator {
      * @return SqlGenerator
      */
     static SelectSqlGenerator create(DataBase dataBase){
+        if(dataBase == null){
+            throw new SqlGeneratorException("未连接数据库.");
+        }
         if(DataBase.MySQL == dataBase){
             return new MysqlSelectSqlGenerator();
         }
