@@ -11,6 +11,7 @@ import top.youlanqiang.mixorm.entity.User;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 
 /**
@@ -75,4 +76,28 @@ public class MixormTest {
         }
     }
 
+    @Test
+    @DisplayName("测试删除一条数据")
+    public void delete() throws SQLException {
+        DataEntity<User> entity =  mixorm.create(User.class);
+        Integer i = entity.use(connection).deleteById(1);
+        if(i == 1){
+            System.out.println("更新成功");
+        }else {
+            throw new RuntimeException("插入失败.");
+        }
+    }
+
+
+    @Test
+    @DisplayName("测试删除N条数据")
+    public void deleteSome() throws SQLException {
+        DataEntity<User> entity =  mixorm.create(User.class);
+        Integer i = entity.use(connection).deleteBatchIds(Arrays.asList(2,3,4,5,6));
+        if(i == 5){
+            System.out.println("更新成功");
+        }else {
+            throw new RuntimeException("插入失败.");
+        }
+    }
 }
