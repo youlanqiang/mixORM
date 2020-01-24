@@ -1,52 +1,51 @@
 package top.youlanqiang.mixorm.sql;
 
 import top.youlanqiang.mixorm.exceptions.SqlGeneratorException;
-import top.youlanqiang.mixorm.sql.mysql.MysqlInsertSqlGenerator;
+import top.youlanqiang.mixorm.sql.mysql.MysqlUpdateSql;
 
 import java.util.List;
 
 /**
  * @author youlanqiang
  */
-public interface InsertSqlGenerator extends SqlGenerator {
+public interface UpdateSql extends SqlGenerator {
 
     /**
      * 返回对应数据库的SqlGenerator
      * @param dataBase 数据库类型
      * @return SqlGenerator
      */
-    static InsertSqlGenerator create(DataBase dataBase){
+    static UpdateSql create(DataBase dataBase){
         if(dataBase == null){
             throw new SqlGeneratorException("未连接数据库.");
         }
         if(DataBase.MySQL == dataBase){
-            return new MysqlInsertSqlGenerator();
+            return new MysqlUpdateSql();
         }
         throw new SqlGeneratorException("未支持的数据库类型:" + dataBase);
     }
 
     /**
-     * 设置插入数据的表名
+     * 待更新的数据库表
      * @param tableName 表名
      * @return this
      */
-    InsertSqlGenerator insertInto(String tableName);
-
-
-    /**
-     * 设置字段
-     * @param columns 字段的list
-     * @return this
-     */
-    InsertSqlGenerator fields(List<String> columns);
-
+    UpdateSql update(String tableName);
 
     /**
-     * 将数据插入insertSqlGenerator中
-     * @param values value
+     * 设置更新的字段
+     * @param column 字段名
+     * @param value  数据
      * @return this
      */
-    InsertSqlGenerator values(List<Object> values);
+    UpdateSql set(String column, Object value);
+
+    /**
+     * 添加条件
+     * @param conditionSql 条件
+     * @return this
+     */
+    UpdateSql where(ConditionSql conditionSql);
 
     /**
      * 返回params参数集合
@@ -54,5 +53,4 @@ public interface InsertSqlGenerator extends SqlGenerator {
      */
     @Override
     List<Object> getParams();
-
 }

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import top.youlanqiang.mixorm.Mixorm;
 import top.youlanqiang.mixorm.MixormConfig;
-import top.youlanqiang.mixorm.domain.DataEntity;
+import top.youlanqiang.mixorm.DataEntity;
 import top.youlanqiang.mixorm.entity.User;
 
 import java.sql.Connection;

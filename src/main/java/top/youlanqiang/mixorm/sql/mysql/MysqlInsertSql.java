@@ -1,7 +1,7 @@
 package top.youlanqiang.mixorm.sql.mysql;
 
 import top.youlanqiang.mixorm.exceptions.SqlGeneratorException;
-import top.youlanqiang.mixorm.sql.InsertSqlGenerator;
+import top.youlanqiang.mixorm.sql.InsertSql;
 import top.youlanqiang.mixorm.toolkit.StringUtils;
 
 
@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * @author youlanqiang
  */
-public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
+public class MysqlInsertSql implements InsertSql {
 
     private StringBuilder sql;
 
@@ -18,13 +18,13 @@ public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
 
     private boolean batch;
 
-    public MysqlInsertSqlGenerator() {
+    public MysqlInsertSql() {
         this.sql = new StringBuilder();
         this.params = new LinkedList<>();
     }
 
     @Override
-    public InsertSqlGenerator insertInto(String tableName) {
+    public InsertSql insertInto(String tableName) {
         this.sql.append(" INSERT INTO ").append(tableName).append(" ");
         return this;
     }
@@ -32,7 +32,7 @@ public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
 
 
     @Override
-    public InsertSqlGenerator fields(List<String> columns) {
+    public InsertSql fields(List<String> columns) {
         this.sql.append(StringUtils.foreach("(", ")", ",", columns));
         return this;
     }
@@ -40,7 +40,7 @@ public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
 
 
     @Override
-    public InsertSqlGenerator values(List<Object> values){
+    public InsertSql values(List<Object> values){
         this.sql.append(" VALUES ");
         this.oneItem(values);
         return this;
@@ -65,7 +65,7 @@ public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
 
 
 
-    private InsertSqlGenerator oneItem(List<Object> values) {
+    private InsertSql oneItem(List<Object> values) {
         this.params = values;
         if(!batch) {
             this.sql.append(StringUtils.foreachByMark("(", ")", ",", values.size(), "?"));

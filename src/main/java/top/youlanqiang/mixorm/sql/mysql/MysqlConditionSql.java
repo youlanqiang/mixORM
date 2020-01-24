@@ -1,6 +1,6 @@
 package top.youlanqiang.mixorm.sql.mysql;
 
-import top.youlanqiang.mixorm.sql.ConditionSqlGenerator;
+import top.youlanqiang.mixorm.sql.ConditionSql;
 import top.youlanqiang.mixorm.toolkit.StringUtils;
 
 import java.util.ArrayList;
@@ -12,25 +12,25 @@ import java.util.List;
 /**
  * @author youlanqiang
  */
-public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
+public class MysqlConditionSql implements ConditionSql {
 
     private StringBuilder sql;
 
     private List<Object> params;
 
-    public MysqlConditionSqlGenerator(){
+    public MysqlConditionSql(){
         this.sql = new StringBuilder();
         this.params = new ArrayList<>();
     }
 
     @Override
-    public ConditionSqlGenerator and(){
+    public ConditionSql and(){
         this.sql.append(" AND ");
         return this;
     }
 
     @Override
-    public ConditionSqlGenerator or(){
+    public ConditionSql or(){
         this.sql.append(" OR ");
         return this;
     }
@@ -39,7 +39,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * 等于 =
      */
     @Override
-    public ConditionSqlGenerator eq(String column, Object val){
+    public ConditionSql eq(String column, Object val){
         this.sql.append(" ").append(column).append(" = ? ");
         this.params.add(val);
         return this;
@@ -49,7 +49,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * 不等于 <>
      */
     @Override
-    public ConditionSqlGenerator ne(String column, Object val){
+    public ConditionSql ne(String column, Object val){
         this.sql.append(" ").append(column).append(" <> ? ");
         this.params.add(val);
         return this;
@@ -59,7 +59,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * 大于 >
      */
     @Override
-    public ConditionSqlGenerator gt(String column, Object val){
+    public ConditionSql gt(String column, Object val){
         this.sql.append(" ").append(column).append(" > ? ");
         this.params.add(val);
         return this;
@@ -69,7 +69,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * 大于等于 >=
      */
     @Override
-    public ConditionSqlGenerator ge(String column, Object val){
+    public ConditionSql ge(String column, Object val){
         this.sql.append(" ").append(column).append(" >= ? ");
         this.params.add(val);
         return this;
@@ -79,7 +79,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * 小于 <
      */
     @Override
-    public ConditionSqlGenerator lt(String column, Object val){
+    public ConditionSql lt(String column, Object val){
         this.sql.append(" ").append(column).append(" < ? ");
         this.params.add(val);
         return this;
@@ -89,7 +89,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * 小于等于 <=
      */
     @Override
-    public ConditionSqlGenerator le(String column, Object val){
+    public ConditionSql le(String column, Object val){
         this.sql.append(" ").append(column).append(" <= ? ");
         this.params.add(val);
         return this;
@@ -99,7 +99,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * column between v1 and v2
      */
     @Override
-    public ConditionSqlGenerator between(String column, Object v1, Object v2){
+    public ConditionSql between(String column, Object v1, Object v2){
         this.sql.append(" ").append(column).append(" BETWEEN ? AND ? ");
         this.params.add(v1);
         this.params.add(v2);
@@ -110,7 +110,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * column not between v1 and v2
      */
     @Override
-    public ConditionSqlGenerator notBetween(String column, Object v1, Object v2){
+    public ConditionSql notBetween(String column, Object v1, Object v2){
         this.sql.append(" ").append(column).append(" NOT BETWEEN ? AND ? ");
         this.params.add(v1);
         this.params.add(v2);
@@ -121,7 +121,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * column like %val%
      */
     @Override
-    public ConditionSqlGenerator like(String column, Object val){
+    public ConditionSql like(String column, Object val){
         this.sql.append(" ").append(column).append(" LIKE  ? ");
         this.params.add("%" + val.toString() + "%");
         return this;
@@ -131,7 +131,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * column not like %val%
      */
     @Override
-    public ConditionSqlGenerator notLike(String column, Object val){
+    public ConditionSql notLike(String column, Object val){
         this.sql.append(" ").append(column).append(" NOT LIKE  ? ");
         this.params.add("%" + val.toString() + "%");
         return this;
@@ -141,7 +141,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * column like %val
      */
     @Override
-    public ConditionSqlGenerator likeLeft(String column, Object val){
+    public ConditionSql likeLeft(String column, Object val){
         this.sql.append(" ").append(column).append(" LIKE  ? ");
         this.params.add("%" + val.toString());
         return this;
@@ -151,7 +151,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * column like val%
      */
     @Override
-    public ConditionSqlGenerator likeRight(String column, Object val){
+    public ConditionSql likeRight(String column, Object val){
         this.sql.append(" ").append(column).append(" LIKE  ? ");
         this.params.add(val.toString() + "%");
         return this;
@@ -161,7 +161,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * column is null
      */
     @Override
-    public ConditionSqlGenerator isNull(String column){
+    public ConditionSql isNull(String column){
         this.sql.append(" ").append(column).append(" IS NULL ");
         return this;
     }
@@ -170,7 +170,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * column is not null
      */
     @Override
-    public ConditionSqlGenerator isNotNull(String column){
+    public ConditionSql isNotNull(String column){
         this.sql.append(" ").append(column).append(" IS NOT NULL ");
         return this;
     }
@@ -179,7 +179,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * column in (v1,v2,v3...)
      */
     @Override
-    public ConditionSqlGenerator in(String column, Object... values){
+    public ConditionSql in(String column, Object... values){
         in(column, Arrays.asList(values));
         return this;
     }
@@ -188,7 +188,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * column in (v1,v2,v3...)
      */
     @Override
-    public ConditionSqlGenerator in(String column, Collection values){
+    public ConditionSql in(String column, Collection values){
         this.sql.append(" ").append(column).append(" IN ");
         String str = StringUtils.foreachByMark("(",")",",",values.size(), "?");
         this.sql.append(str);
@@ -200,7 +200,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * column not in (v1,v2,v3...)
      */
     @Override
-    public ConditionSqlGenerator notIn(String column, Object... values){
+    public ConditionSql notIn(String column, Object... values){
         notIn(column, Arrays.asList(values));
         return this;
     }
@@ -209,7 +209,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * column not in (v1,v2,v3...)
      */
     @Override
-    public ConditionSqlGenerator notIn(String column, Collection values){
+    public ConditionSql notIn(String column, Collection values){
         this.sql.append(" ").append(column).append(" NOT IN ");
         String str = StringUtils.foreachByMark("(",")",",",values.size(), "?");
         this.sql.append(str);
@@ -221,7 +221,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * column in ( inValue )
      */
     @Override
-    public ConditionSqlGenerator inSql(String column, String inValue){
+    public ConditionSql inSql(String column, String inValue){
         this.sql.append(" ").append(column).append(" IN (").append(inValue).append(") ");
         return this;
     }
@@ -230,7 +230,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * column not in ( inValue )
      */
     @Override
-    public ConditionSqlGenerator notInSql(String column, String inValue){
+    public ConditionSql notInSql(String column, String inValue){
         this.sql.append(" ").append(column).append(" NOT IN (").append(inValue).append(") ");
         return this;
     }
@@ -239,7 +239,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * group by v1, v2
      */
     @Override
-    public ConditionSqlGenerator groupBy(String... columns){
+    public ConditionSql groupBy(String... columns){
         this.sql.append(" ").append(" GROUP BY ");
         String sql = StringUtils.foreach("", "", ",", Arrays.asList(columns));
         this.sql.append(sql);
@@ -250,7 +250,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * order by v1 ASC, v2 ASC
      */
     @Override
-    public ConditionSqlGenerator orderByAsc(String... columns){
+    public ConditionSql orderByAsc(String... columns){
         this.sql.append(" ").append(" ORDER BY ");
         String sql = StringUtils.foreachAddExt("",  "",  ",", Arrays.asList(columns), "ASC");
         this.sql.append(sql);
@@ -261,7 +261,7 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * order by v1 DESC, v2 DESC
      */
     @Override
-    public ConditionSqlGenerator orderByDesc(String... columns){
+    public ConditionSql orderByDesc(String... columns){
         this.sql.append(" ").append(" ORDER BY ");
         String sql = StringUtils.foreachAddExt("",  "",  ",", Arrays.asList(columns), "DESC");
         this.sql.append(sql);
@@ -272,19 +272,19 @@ public class MysqlConditionSqlGenerator implements ConditionSqlGenerator {
      * having str
      */
     @Override
-    public ConditionSqlGenerator having(String sqlHaving){
+    public ConditionSql having(String sqlHaving){
         this.sql.append(" ").append(" HAVING ").append(sqlHaving);
         return this;
     }
 
     @Override
-    public ConditionSqlGenerator limit(Integer offset, Integer rows) {
+    public ConditionSql limit(Integer offset, Integer rows) {
         this.sql.append(" ").append(" LIMIT ").append(offset).append(" , ").append(rows);
         return this;
     }
 
     @Override
-    public ConditionSqlGenerator limit(Integer offset) {
+    public ConditionSql limit(Integer offset) {
         this.sql.append(" ").append(" LIMIT ").append(offset);
         return this;
     }

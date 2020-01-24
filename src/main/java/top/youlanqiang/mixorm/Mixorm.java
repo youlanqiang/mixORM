@@ -1,7 +1,5 @@
 package top.youlanqiang.mixorm;
 
-import top.youlanqiang.mixorm.domain.DataEntity;
-
 /**
  * @author youlanqiang
  */
@@ -26,7 +24,7 @@ public final class Mixorm {
 
 
     public <T> DataEntity<T> create(Class<T> clazz){
-        return new BaseDataEntity<>(clazz);
+        return new SqlExecutor<>(clazz);
     }
 
 

@@ -2,7 +2,7 @@ package top.youlanqiang.mixorm.sql;
 
 
 import top.youlanqiang.mixorm.exceptions.SqlGeneratorException;
-import top.youlanqiang.mixorm.sql.mysql.MysqlConditionSqlGenerator;
+import top.youlanqiang.mixorm.sql.mysql.MysqlConditionSql;
 
 import java.util.Collection;
 import java.util.List;
@@ -11,16 +11,16 @@ import java.util.List;
 /**
  * @author youlanqiang
  */
-public interface ConditionSqlGenerator extends SqlGenerator {
+public interface ConditionSql extends SqlGenerator {
 
     /**
      * 返回对应数据库的SqlGenerator
      * @param dataBase 数据库类型
      * @return SqlGenerator
      */
-    static ConditionSqlGenerator create(DataBase dataBase) {
+    static ConditionSql create(DataBase dataBase) {
         if(DataBase.MySQL == dataBase){
-            return new MysqlConditionSqlGenerator();
+            return new MysqlConditionSql();
         }
         throw new SqlGeneratorException("未支持的数据库类型:" + dataBase);
     }
@@ -29,13 +29,13 @@ public interface ConditionSqlGenerator extends SqlGenerator {
      * and
      * @return this
      */
-    ConditionSqlGenerator and();
+    ConditionSql and();
 
     /**
      * or
      * @return this
      */
-    ConditionSqlGenerator or();
+    ConditionSql or();
 
     /**
      * 等于 =
@@ -43,7 +43,7 @@ public interface ConditionSqlGenerator extends SqlGenerator {
      * @param val 值
      * @return this
      */
-    ConditionSqlGenerator eq(String column, Object val);
+    ConditionSql eq(String column, Object val);
 
     /**
      * 等于 <>
@@ -51,7 +51,7 @@ public interface ConditionSqlGenerator extends SqlGenerator {
      * @param val 值
      * @return this
      */
-    ConditionSqlGenerator ne(String column, Object val);
+    ConditionSql ne(String column, Object val);
 
     /**
      * 大于 >
@@ -59,7 +59,7 @@ public interface ConditionSqlGenerator extends SqlGenerator {
      * @param val 值
      * @return this
      */
-    ConditionSqlGenerator gt(String column, Object val);
+    ConditionSql gt(String column, Object val);
 
     /**
      * 大于等于 >=
@@ -67,7 +67,7 @@ public interface ConditionSqlGenerator extends SqlGenerator {
      * @param val 值
      * @return this
      */
-    ConditionSqlGenerator ge(String column, Object val);
+    ConditionSql ge(String column, Object val);
 
     /**
      * 小于 <
@@ -75,7 +75,7 @@ public interface ConditionSqlGenerator extends SqlGenerator {
      * @param val 值
      * @return this
      */
-    ConditionSqlGenerator lt(String column, Object val);
+    ConditionSql lt(String column, Object val);
 
     /**
      * 小于等于 <=
@@ -83,7 +83,7 @@ public interface ConditionSqlGenerator extends SqlGenerator {
      * @param val 值
      * @return this
      */
-    ConditionSqlGenerator le(String column, Object val);
+    ConditionSql le(String column, Object val);
 
     /**
      * between v1 and v2
@@ -92,7 +92,7 @@ public interface ConditionSqlGenerator extends SqlGenerator {
      * @param v2 to
      * @return this
      */
-    ConditionSqlGenerator between(String column, Object v1, Object v2);
+    ConditionSql between(String column, Object v1, Object v2);
 
     /**
      * not between v1 and v2
@@ -101,7 +101,7 @@ public interface ConditionSqlGenerator extends SqlGenerator {
      * @param v2 to
      * @return this
      */
-    ConditionSqlGenerator notBetween(String column, Object v1, Object v2);
+    ConditionSql notBetween(String column, Object v1, Object v2);
 
     /**
      * like '%v1%'
@@ -109,7 +109,7 @@ public interface ConditionSqlGenerator extends SqlGenerator {
      * @param val 值
      * @return this
      */
-    ConditionSqlGenerator like(String column, Object val);
+    ConditionSql like(String column, Object val);
 
     /**
      * not like '%v1%'
@@ -117,7 +117,7 @@ public interface ConditionSqlGenerator extends SqlGenerator {
      * @param val 值
      * @return this
      */
-    ConditionSqlGenerator notLike(String column, Object val);
+    ConditionSql notLike(String column, Object val);
 
     /**
      * like '%v1'
@@ -125,7 +125,7 @@ public interface ConditionSqlGenerator extends SqlGenerator {
      * @param val 值
      * @return this
      */
-    ConditionSqlGenerator likeLeft(String column, Object val);
+    ConditionSql likeLeft(String column, Object val);
 
     /**
      * like 'v1%'
@@ -133,21 +133,21 @@ public interface ConditionSqlGenerator extends SqlGenerator {
      * @param val 值
      * @return this
      */
-    ConditionSqlGenerator likeRight(String column, Object val);
+    ConditionSql likeRight(String column, Object val);
 
     /**
      * v1 is null
      * @param column 字段名
      * @return this
      */
-    ConditionSqlGenerator isNull(String column);
+    ConditionSql isNull(String column);
 
     /**
      * v1 is not null
      * @param column 字段名
      * @return this
      */
-    ConditionSqlGenerator isNotNull(String column);
+    ConditionSql isNotNull(String column);
 
     /**
      * in ( values )
@@ -155,7 +155,7 @@ public interface ConditionSqlGenerator extends SqlGenerator {
      * @param values values
      * @return this
      */
-    ConditionSqlGenerator in(String column, Object... values);
+    ConditionSql in(String column, Object... values);
 
     /**
      * in ( values )
@@ -163,7 +163,7 @@ public interface ConditionSqlGenerator extends SqlGenerator {
      * @param values values
      * @return this
      */
-    ConditionSqlGenerator in(String column, Collection values);
+    ConditionSql in(String column, Collection values);
 
     /**
      * not in ( values )
@@ -171,7 +171,7 @@ public interface ConditionSqlGenerator extends SqlGenerator {
      * @param values values
      * @return this
      */
-    ConditionSqlGenerator notIn(String column, Object... values);
+    ConditionSql notIn(String column, Object... values);
 
     /**
      * not in ( values )
@@ -179,7 +179,7 @@ public interface ConditionSqlGenerator extends SqlGenerator {
      * @param values values
      * @return this
      */
-    ConditionSqlGenerator notIn(String column, Collection values);
+    ConditionSql notIn(String column, Collection values);
 
     /**
      * in ( sql )
@@ -187,7 +187,7 @@ public interface ConditionSqlGenerator extends SqlGenerator {
      * @param inValue sql
      * @return this
      */
-    ConditionSqlGenerator inSql(String column, String inValue);
+    ConditionSql inSql(String column, String inValue);
 
     /**
      * not in ( sql )
@@ -195,35 +195,35 @@ public interface ConditionSqlGenerator extends SqlGenerator {
      * @param inValue sql
      * @return this
      */
-    ConditionSqlGenerator notInSql(String column, String inValue);
+    ConditionSql notInSql(String column, String inValue);
 
     /**
      * group by columns
      * @param columns 字段名
      * @return this
      */
-    ConditionSqlGenerator groupBy(String... columns);
+    ConditionSql groupBy(String... columns);
 
     /**
      * order by columns asc
      * @param columns 字段名
      * @return this
      */
-    ConditionSqlGenerator orderByAsc(String... columns);
+    ConditionSql orderByAsc(String... columns);
 
     /**
      * order by columns desc
      * @param columns 字段名
      * @return this
      */
-    ConditionSqlGenerator orderByDesc(String... columns);
+    ConditionSql orderByDesc(String... columns);
 
     /**
      * HAVING [sql]
      * @param sqlHaving sql
      * @return this
      */
-    ConditionSqlGenerator having(String sqlHaving);
+    ConditionSql having(String sqlHaving);
 
     /**
      * limit offset, rows
@@ -231,14 +231,14 @@ public interface ConditionSqlGenerator extends SqlGenerator {
      * @param rows rows
      * @return this
      */
-    ConditionSqlGenerator limit(Integer offset, Integer rows);
+    ConditionSql limit(Integer offset, Integer rows);
 
     /**
      * limit offset
      * @param offset offset
      * @return this
      */
-    ConditionSqlGenerator limit(Integer offset);
+    ConditionSql limit(Integer offset);
 
     /**
      * 返回params参数集合

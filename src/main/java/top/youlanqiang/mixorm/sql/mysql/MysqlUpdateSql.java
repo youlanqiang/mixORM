@@ -1,8 +1,8 @@
 package top.youlanqiang.mixorm.sql.mysql;
 
 
-import top.youlanqiang.mixorm.sql.ConditionSqlGenerator;
-import top.youlanqiang.mixorm.sql.UpdateSqlGenerator;
+import top.youlanqiang.mixorm.sql.ConditionSql;
+import top.youlanqiang.mixorm.sql.UpdateSql;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -10,27 +10,27 @@ import java.util.List;
 /**
  * @author youlanqiang
  */
-public class MysqlUpdateSqlGenerator implements UpdateSqlGenerator {
+public class MysqlUpdateSql implements UpdateSql {
 
     private StringBuilder sql;
 
-    private ConditionSqlGenerator conditionSqlGenerator;
+    private ConditionSql conditionSql;
 
     private List<Object> params;
 
-    public MysqlUpdateSqlGenerator(){
+    public MysqlUpdateSql(){
         this.sql = new StringBuilder();
         this.params = new LinkedList<>();
     }
 
     @Override
-    public UpdateSqlGenerator update(String tableName) {
+    public UpdateSql update(String tableName) {
         this.sql.append("UPDATE ").append(tableName).append(" SET ");
         return this;
     }
 
     @Override
-    public UpdateSqlGenerator set(String column, Object value) {
+    public UpdateSql set(String column, Object value) {
         if(params.isEmpty()){
             this.sql.append(column).append("= ? ");
         }else{
@@ -41,10 +41,10 @@ public class MysqlUpdateSqlGenerator implements UpdateSqlGenerator {
     }
 
     @Override
-    public UpdateSqlGenerator where(ConditionSqlGenerator conditionSqlGenerator) {
-        if(conditionSqlGenerator != null){
-            this.conditionSqlGenerator = conditionSqlGenerator;
-            this.params.addAll(conditionSqlGenerator.getParams());
+    public UpdateSql where(ConditionSql conditionSql) {
+        if(conditionSql != null){
+            this.conditionSql = conditionSql;
+            this.params.addAll(conditionSql.getParams());
         }
         return this;
     }
@@ -61,10 +61,10 @@ public class MysqlUpdateSqlGenerator implements UpdateSqlGenerator {
 
     @Override
     public String getSql() {
-        if(this.conditionSqlGenerator == null){
+        if(this.conditionSql == null){
             return getString();
         }else{
-            return this.sql.toString() + this.conditionSqlGenerator.getSql();
+            return this.sql.toString() + this.conditionSql.getSql();
         }
     }
 
