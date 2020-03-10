@@ -32,7 +32,7 @@ public class MixormTest {
 
     @BeforeAll
     public static void init() throws ClassNotFoundException, SQLException {
-        mixorm = Mixorm.getInstance().config(MixormConfig.build().onDebug());
+        mixorm = Mixorm.getInstance().config(MixormConfig.builder().setDebug(true).build());
         Class.forName(driver);
         connection = DriverManager.getConnection(url, username, password);
     }

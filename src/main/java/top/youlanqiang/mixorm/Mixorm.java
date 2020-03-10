@@ -9,7 +9,14 @@ public final class Mixorm {
 
     private MixormConfig mixormConfig;
 
-    private Mixorm(){}
+    /**
+     * 默认初始的配置文件
+     */
+    private static final MixormConfig DEFAULT_CONFIG = MixormConfig.builder().setDebug(false).build();
+
+    private Mixorm(){
+        this.mixormConfig = DEFAULT_CONFIG;
+    }
 
     public static Mixorm getInstance(){
         return InnerObject.MIXORM;

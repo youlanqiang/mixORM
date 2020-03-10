@@ -5,28 +5,39 @@ package top.youlanqiang.mixorm;
  */
 public class MixormConfig {
 
+    public static class MixormConfigBuilder{
+
+        private MixormConfig mixormConfig;
+
+        public MixormConfigBuilder(){
+            this.mixormConfig = new MixormConfig();
+        }
+
+        /**
+         * 开启debug调试模式
+         * @return config
+         */
+        public MixormConfigBuilder setDebug(boolean val){
+            this.mixormConfig.debug = val;
+            return this;
+        }
+
+        public MixormConfig build(){
+            return this.mixormConfig;
+        }
+
+    }
+
     private boolean debug;
 
-
     private MixormConfig(){}
-
-    public static MixormConfig build(){
-        return new MixormConfig();
-    }
-
-    /**
-     * 开启debug调试模式
-     * @return config
-     */
-    public MixormConfig onDebug(){
-        this.debug = true;
-        return this;
-    }
-
 
     public boolean isDebug() {
         return debug;
     }
 
+    public static MixormConfigBuilder builder(){
+        return new MixormConfigBuilder();
+    }
 
 }
