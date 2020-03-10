@@ -1,51 +1,59 @@
 package top.youlanqiang.mixorm.sql;
 
-import top.youlanqiang.mixorm.exceptions.SqlGeneratorException;
-import top.youlanqiang.mixorm.sql.mysql.MysqlUpdateSqlGenerator;
 
+import top.youlanqiang.mixorm.exceptions.SqlGeneratorException;
+import top.youlanqiang.mixorm.sql.mysql.MysqlSelectSql;
+
+import java.util.Collection;
 import java.util.List;
 
 /**
  * @author youlanqiang
  */
-public interface UpdateSqlGenerator extends SqlGenerator {
+public interface SelectSql extends SqlGenerator {
 
     /**
      * 返回对应数据库的SqlGenerator
      * @param dataBase 数据库类型
      * @return SqlGenerator
      */
-    static UpdateSqlGenerator create(DataBase dataBase){
+    static SelectSql create(DataBase dataBase){
         if(dataBase == null){
             throw new SqlGeneratorException("未连接数据库.");
         }
         if(DataBase.MySQL == dataBase){
-            return new MysqlUpdateSqlGenerator();
+            return new MysqlSelectSql();
         }
         throw new SqlGeneratorException("未支持的数据库类型:" + dataBase);
     }
 
     /**
-     * 待更新的数据库表
+     * 设置需要查询的字段
+     * @param columns 查询字段
+     * @return this
+     */
+    SelectSql select(String... columns);
+
+    /**
+     * 设置需要查询的字段
+     * @param columns 查询字段
+     * @return this
+     */
+    SelectSql select(Collection<String> columns);
+
+    /**
+     * 设置查询的表名
      * @param tableName 表名
      * @return this
      */
-    UpdateSqlGenerator update(String tableName);
+    SelectSql from(String tableName);
 
     /**
-     * 设置更新的字段
-     * @param column 字段名
-     * @param value  数据
+     * 设置查询条件
+     * @param conditionSql 条件
      * @return this
      */
-    UpdateSqlGenerator set(String column, Object value);
-
-    /**
-     * 添加条件
-     * @param conditionSqlGenerator 条件
-     * @return this
-     */
-    UpdateSqlGenerator where(ConditionSqlGenerator conditionSqlGenerator);
+    SelectSql where(ConditionSql conditionSql);
 
     /**
      * 返回params参数集合
@@ -53,4 +61,5 @@ public interface UpdateSqlGenerator extends SqlGenerator {
      */
     @Override
     List<Object> getParams();
+
 }

@@ -1,6 +1,7 @@
-package top.youlanqiang.mixorm.domain;
+package top.youlanqiang.mixorm;
 
-import top.youlanqiang.mixorm.sql.ConditionSqlGenerator;
+import top.youlanqiang.mixorm.domain.PageEntity;
+import top.youlanqiang.mixorm.sql.ConditionSql;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -57,7 +58,7 @@ public interface DataEntity<T> {
      * @param sql 条件构造器
      * @return 删除成功记录数
      */
-    Integer deleteByCondition(ConditionSqlGenerator sql);
+    Integer deleteByCondition(ConditionSql sql);
 
     /**
      * 删除，根据ID批量删除
@@ -79,7 +80,7 @@ public interface DataEntity<T> {
      * @param sql 条件构造器
      * @return 修改成功记录数
      */
-    Integer update(T entity, ConditionSqlGenerator sql);
+    Integer update(T entity, ConditionSql sql);
 
     /**
      * 根据ID查询
@@ -100,7 +101,7 @@ public interface DataEntity<T> {
      * @param sql 条件构造器
      * @return 实体对象
      */
-    T selectOne(ConditionSqlGenerator sql);
+    T selectOne(ConditionSql sql);
 
 
     /**
@@ -108,14 +109,14 @@ public interface DataEntity<T> {
      * @param sql 条件构造器
      * @return 记录数数量
      */
-    Integer selectCount(ConditionSqlGenerator sql);
+    Integer selectCount(ConditionSql sql);
 
     /**
      * 根据条件构造器，查询全部记录
      * @param sql 条件构造器
      * @return 实体集合
      */
-    List<T> selectList(ConditionSqlGenerator sql);
+    List<T> selectList(ConditionSql sql);
 
     /**
      * 查询一个分页
@@ -132,6 +133,6 @@ public interface DataEntity<T> {
      * @param sql 条件构造器
      * @return 分页结果集合
      */
-    PageEntity<T> selectPage(int current, int size, ConditionSqlGenerator sql);
+    PageEntity<T> selectPage(int current, int size, ConditionSql sql);
 
 }

@@ -15,7 +15,5 @@ mixORM是为了解决我在工作中遇到问题所编写的一种无规范，0�
 * [ ] oracle
 * [ ] Postgre SQL
 
-## 架构图
-![draw.io_vrnSouKiGj.png](https://i.loli.net/2020/01/11/wtVL2U6adrS4RuB.png)
 
 > write by youlanqiang

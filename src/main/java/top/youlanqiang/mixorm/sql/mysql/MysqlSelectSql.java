@@ -1,7 +1,7 @@
 package top.youlanqiang.mixorm.sql.mysql;
 
-import top.youlanqiang.mixorm.sql.ConditionSqlGenerator;
-import top.youlanqiang.mixorm.sql.SelectSqlGenerator;
+import top.youlanqiang.mixorm.sql.ConditionSql;
+import top.youlanqiang.mixorm.sql.SelectSql;
 import top.youlanqiang.mixorm.toolkit.StringUtils;
 
 import java.util.Arrays;
@@ -11,23 +11,23 @@ import java.util.List;
 /**
  * @author youlanqiang
  */
-public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
+public class MysqlSelectSql implements SelectSql {
 
     private StringBuilder sql;
 
-    private ConditionSqlGenerator conditionSqlGenerator;
+    private ConditionSql conditionSql;
 
-    public MysqlSelectSqlGenerator(){
+    public MysqlSelectSql(){
         this.sql = new StringBuilder();
     }
 
     @Override
-    public SelectSqlGenerator select(String... columns) {
+    public SelectSql select(String... columns) {
         return select(Arrays.asList(columns));
     }
 
     @Override
-    public SelectSqlGenerator select(Collection<String> columns) {
+    public SelectSql select(Collection<String> columns) {
         this.sql.append("SELECT ")
                 .append(StringUtils.foreach("", "", ",", columns))
                 .append(" ");
@@ -35,21 +35,21 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
     }
 
     @Override
-    public SelectSqlGenerator from(String tableName) {
+    public SelectSql from(String tableName) {
         this.sql.append(" FROM ").append(tableName);
         return this;
     }
 
     @Override
-    public SelectSqlGenerator where(ConditionSqlGenerator conditionSqlGenerator) {
-        this.conditionSqlGenerator = conditionSqlGenerator;
+    public SelectSql where(ConditionSql conditionSql) {
+        this.conditionSql = conditionSql;
         return this;
     }
 
     @Override
     public List<Object> getParams() {
-        if(this.conditionSqlGenerator != null){
-            return this.conditionSqlGenerator.getParams();
+        if(this.conditionSql != null){
+            return this.conditionSql.getParams();
         }
         return null;
     }
@@ -61,10 +61,10 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 
     @Override
     public String getSql() {
-        if(this.conditionSqlGenerator == null){
+        if(this.conditionSql == null){
             return getString();
         }else{
-            return this.sql.toString() + this.conditionSqlGenerator.getSql();
+            return this.sql.toString() + this.conditionSql.getSql();
         }
     }
 
