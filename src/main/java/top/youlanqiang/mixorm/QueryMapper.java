@@ -29,7 +29,9 @@ class QueryMapper<T> {
     private void before(String sql, List<Object> param){
         if(Mixorm.getInstance().getConfig().isDebug()){
             System.out.println("SQL:" + sql);
-            System.out.println("PARAMS:" + param.toString());
+            if(param != null) {
+                System.out.println("PARAMS:" + param.toString());
+            }
         }
     }
 
