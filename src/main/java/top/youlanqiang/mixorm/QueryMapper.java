@@ -209,14 +209,26 @@ class QueryMapper<T> {
             Constructor<T> constructor = tClass.getConstructor( null);
             result = constructor.newInstance( null);
             EntityField id = mate.getIdEntity();
-            Method idMethod = tClass.getMethod(id.getSetMethod(), id.getColumnType());
-            idMethod.invoke(result, resultSet.getObject(id.getColumnName()));
-
+            if(mate.isHasId()) {
+                Method idMethod = tClass.getMethod(id.getSetMethod(), id.getColumnType());
+                if (Mixorm.getInstance().getConfig().isDebug()) {
+                    System.out.println("ColumnName:" + id.getColumnName() + " MethodName:" + idMethod.getName()
+                            + " ClassType:" + resultSet.getObject(id.getColumnName()).getClass().getName());
+                }
+                idMethod.invoke(result, resultSet.getObject(id.getColumnName()));
+            }
             Map<String, EntityField> fields = mate.getFields();
             for (String key : fields.keySet()) {
+
                 EntityField field = fields.get(key);
                 Method method = tClass.getMethod(field.getSetMethod(), field.getColumnType());
-                method.invoke(result, resultSet.getObject(field.getColumnName()));
+                if(resultSet.getObject(field.getColumnName()) != null) {
+                    if (Mixorm.getInstance().getConfig().isDebug()) {
+                        System.out.println("ColumnName:" + field.getColumnName() + " MethodName:" + method.getName()
+                                + " ClassType:" + resultSet.getObject(field.getColumnName()).getClass().getName());
+                    }
+                    method.invoke(result, resultSet.getObject(field.getColumnName()));
+                }
             }
 
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | SQLException e) {

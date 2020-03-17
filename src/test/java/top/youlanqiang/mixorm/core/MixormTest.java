@@ -6,12 +6,14 @@ import org.junit.jupiter.api.Test;
 import top.youlanqiang.mixorm.Mixorm;
 import top.youlanqiang.mixorm.MixormConfig;
 import top.youlanqiang.mixorm.DataEntity;
+import top.youlanqiang.mixorm.entity.Item;
 import top.youlanqiang.mixorm.entity.User;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -23,18 +25,30 @@ public class MixormTest {
 
     private static Mixorm mixorm;
 
-    private static final String url = "jdbc:mysql://192.168.81.134:3306/test";
+    private static final String url = "jdbc:mysql://192.168.43.202:3306/cloudhome?relaxAutoCommit=true&zeroDateTimeBehavior=convertToNull&characterEncoding=utf8&serverTimezone=Asia/Shanghai";
     private static final String driver = "com.mysql.cj.jdbc.Driver";
     private static final String username = "root";
-    private static final String password = "root";
+    private static final String password = "ybzj";
 
     private static Connection connection;
 
     @BeforeAll
     public static void init() throws ClassNotFoundException, SQLException {
-        mixorm = Mixorm.getInstance().config(MixormConfig.builder().setDebug(true).build());
+        mixorm = Mixorm.getInstance().config(MixormConfig.builder().setDebug(false).build());
         Class.forName(driver);
         connection = DriverManager.getConnection(url, username, password);
+    }
+
+    @Test
+    @DisplayName("测试Item长表查询")
+    public void selectItem(){
+        DataEntity<Item> entity =  mixorm.create(Item.class);
+        try {
+            List<Item> items = entity.use(connection).selectList(null);
+            System.out.println(items.size());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
