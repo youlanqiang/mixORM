@@ -193,10 +193,17 @@ class SqlExecutor<T> implements DataEntity<T> {
 
     @Override
     public List<T> selectList(ConditionSql sql) {
-        SelectSql sqlGenerator = SelectSql.create(dataBase)
-                .select(entityMate.getFields().keySet())
-                .from(entityMate.getTableName())
-                .where(sql);
+        SelectSql sqlGenerator;
+        if(sql != null){
+            sqlGenerator = SelectSql.create(dataBase)
+                    .select(entityMate.getFields().keySet())
+                    .from(entityMate.getTableName())
+                    .where(sql);
+        }else{
+            sqlGenerator =  SelectSql.create(dataBase)
+                    .select(entityMate.getFields().keySet())
+                    .from(entityMate.getTableName());
+        }
         return queryMapper.queryToList(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
     }
 
