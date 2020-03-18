@@ -1,5 +1,6 @@
 package top.youlanqiang.mixorm.sql.mysql;
 
+import top.youlanqiang.mixorm.domain.SqlEntity;
 import top.youlanqiang.mixorm.sql.ConditionSql;
 import top.youlanqiang.mixorm.toolkit.StringUtils;
 
@@ -302,5 +303,10 @@ public class MysqlConditionSql implements ConditionSql {
     @Override
     public List<Object> getParams() {
         return params;
+    }
+
+    @Override
+    public SqlEntity getSqlEntity() {
+        return new SqlEntity(getSql(), getParams());
     }
 }

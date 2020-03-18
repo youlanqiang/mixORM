@@ -1,6 +1,8 @@
 package top.youlanqiang.mixorm.sql;
 
 
+import top.youlanqiang.mixorm.domain.SqlEntity;
+
 import java.util.List;
 
 /**
@@ -25,4 +27,10 @@ public interface SqlGenerator {
      * @return 参数集合
      */
     List<Object> getParams();
+
+    /**
+     * 返回sqlEntity对象
+     * @return sql entity对象
+     */
+    SqlEntity getSqlEntity();
 }

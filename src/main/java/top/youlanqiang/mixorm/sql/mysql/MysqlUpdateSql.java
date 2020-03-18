@@ -1,6 +1,7 @@
 package top.youlanqiang.mixorm.sql.mysql;
 
 
+import top.youlanqiang.mixorm.domain.SqlEntity;
 import top.youlanqiang.mixorm.sql.ConditionSql;
 import top.youlanqiang.mixorm.sql.UpdateSql;
 
@@ -66,6 +67,11 @@ public class MysqlUpdateSql implements UpdateSql {
         }else{
             return this.sql.toString() + this.conditionSql.getSql();
         }
+    }
+
+    @Override
+    public SqlEntity getSqlEntity() {
+        return new SqlEntity(getSql(), getParams());
     }
 
 

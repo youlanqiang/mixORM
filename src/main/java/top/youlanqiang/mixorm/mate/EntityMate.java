@@ -110,6 +110,51 @@ public class EntityMate<T> {
         return variable;
     }
 
+    /**
+     * 获取字段名和值,不包含主键的字段
+     * @param result 对象实体类
+     * @return 返回对象的字段名和值
+     */
+    public Map<String, Object> getVariableSkipId(T result){
+        List<EntityField> fields = new ArrayList<>(getFields().values());
+        Map<String, Object> variable = new HashMap<>(fields.size());
+        for (EntityField field : fields) {
+            if(field.isId()){
+                continue;
+            }
+            Object value = null;
+            try {
+                Method method  = clazz.getDeclaredMethod(field.getGetMethod(),  null);
+                method.setAccessible(true);
+                value = method.invoke(result,  null);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+        return variable;
+    }
+
+    /**
+     * 获取字段名和值
+     * @param result 对象实体类
+     * @return 返回对象的字段名和值
+     */
+    public Map<String, Object> getVariable(T result){
+        List<EntityField> fields = new ArrayList<>(getFields().values());
+        Map<String, Object> variable = new HashMap<>(fields.size());
+        for (EntityField field : fields) {
+            Object value = null;
+            try {
+                Method method  = clazz.getDeclaredMethod(field.getGetMethod(),  null);
+                method.setAccessible(true);
+                value = method.invoke(result,  null);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+        return variable;
+    }
+
     public Class<T> getClazz() {
         return clazz;
     }

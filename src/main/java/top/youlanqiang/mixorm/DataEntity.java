@@ -1,6 +1,7 @@
 package top.youlanqiang.mixorm;
 
 import top.youlanqiang.mixorm.domain.PageEntity;
+import top.youlanqiang.mixorm.mate.EntityMate;
 import top.youlanqiang.mixorm.sql.ConditionSql;
 
 import javax.sql.DataSource;
@@ -31,6 +32,13 @@ public interface DataEntity<T> {
      * @throws SQLException Connection异常
      */
     DataEntity<T> use(Connection connection) throws SQLException;
+
+
+    /**
+     * DataEntity将会在下一次操作中开启事物支持
+     * @return dataEntity对象
+     */
+    DataEntity<T> transaction();
 
     /**
      * 插入一条记录
@@ -149,5 +157,23 @@ public interface DataEntity<T> {
      * @return 分页结果集合
      */
     PageEntity<T> selectPage(int current, int size, ConditionSql sql);
+
+
+    /**
+     * 获取对象元数据
+     * @return EntityMate
+     */
+    EntityMate<T> getEntityMate();
+
+    /**
+     * 下次操作是否支持事物
+     * @return true/false
+     */
+    Boolean isOpenTransaction();
+
+    /**
+     * 关闭事物
+     */
+    void closeTransaction();
 
 }

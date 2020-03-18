@@ -1,5 +1,6 @@
 package top.youlanqiang.mixorm.sql.mysql;
 
+import top.youlanqiang.mixorm.domain.SqlEntity;
 import top.youlanqiang.mixorm.sql.ConditionSql;
 import top.youlanqiang.mixorm.sql.SelectSql;
 import top.youlanqiang.mixorm.toolkit.StringUtils;
@@ -68,5 +69,9 @@ public class MysqlSelectSql implements SelectSql {
         }
     }
 
+    @Override
+    public SqlEntity getSqlEntity() {
+        return new SqlEntity(getSql(), getParams());
+    }
 
 }

@@ -1,6 +1,7 @@
 package top.youlanqiang.mixorm;
 
 
+import top.youlanqiang.mixorm.domain.SqlEntity;
 import top.youlanqiang.mixorm.mate.EntityField;
 import top.youlanqiang.mixorm.mate.EntityMate;
 
@@ -18,33 +19,33 @@ import java.util.Map;
 class QueryMapper<T> {
 
 
-    private final EntityMate<T> mate;
+    private final DataEntity<T> dataEntity;
 
-
-    public QueryMapper(EntityMate<T> mate) {
-        this.mate = mate;
+    public QueryMapper(DataEntity<T> dataEntity) {
+        this.dataEntity = dataEntity;
     }
 
 
-    private void before(String sql, List<Object> param){
+    private void before(SqlEntity sqlEntity){
         if(Mixorm.getInstance().getConfig().isDebug()){
-            System.out.println("SQL:" + sql);
-            if(param != null) {
-                System.out.println("PARAMS:" + param.toString());
+            System.out.println("SQL:" + sqlEntity.getSql());
+            if(sqlEntity.getParam() != null) {
+                System.out.println("PARAMS:" + sqlEntity.getParam().toString());
             }
         }
     }
 
 
-    List<T> queryToList(Connection conn, String sql, List<Object> param) {
+    List<T> queryToList(Connection conn, SqlEntity sqlEntity) {
 
-        before(sql, param);
+        before(sqlEntity);
 
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         List<T> list = new ArrayList<>();
         try {
-            statement = conn.prepareStatement(sql);
+            statement = conn.prepareStatement(sqlEntity.getSql());
+            List<Object> param = sqlEntity.getParam();
             if(param != null) {
                 for (int i = 0; i < param.size(); i++) {
                     statement.setObject(i + 1, param.get(i));
@@ -64,15 +65,16 @@ class QueryMapper<T> {
     }
 
 
-    T queryToSingle(Connection conn, String sql, List<Object> param) {
+    T queryToSingle(Connection conn, SqlEntity sqlEntity) {
 
-        before(sql, param);
+        before(sqlEntity);
 
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         T t = null;
         try {
-            statement = conn.prepareStatement(sql);
+            statement = conn.prepareStatement(sqlEntity.getSql());
+            List<Object> param = sqlEntity.getParam();
             if(param != null) {
                 for (int i = 0; i < param.size(); i++) {
                     statement.setObject(i + 1, param.get(i));
@@ -90,16 +92,18 @@ class QueryMapper<T> {
         return t;
     }
 
-    Integer queryToInteger(Connection conn, String sql, List<Object> param) {
+    Integer queryToInteger(Connection conn, SqlEntity sqlEntity) {
 
-        before(sql, param);
+        before(sqlEntity);
 
 
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         int t = 0;
         try {
-            statement = conn.prepareStatement(sql);
+
+            statement = conn.prepareStatement(sqlEntity.getSql());
+            List<Object> param = sqlEntity.getParam();
             if (param != null) {
                 for (int i = 0; i < param.size(); i++) {
                     statement.setObject(i + 1, param.get(i));
@@ -110,6 +114,7 @@ class QueryMapper<T> {
                 t = resultSet.getInt(1);
             }
         } catch (SQLException e) {
+
             e.printStackTrace();
         } finally {
             close(conn, statement, resultSet);
@@ -117,21 +122,23 @@ class QueryMapper<T> {
         return t;
     }
 
-    InsertResult insert(Connection conn, String sql, List<Object> param, boolean hasGeneratedKey, Class idClass) {
+    InsertResult insert(Connection conn, SqlEntity sqlEntity, boolean hasGeneratedKey, Class idClass) {
 
 
-        before(sql, param);
+        before(sqlEntity);
 
 
         PreparedStatement statement = null;
         ResultSet resultSet = null;
 
         try {
+
             if (hasGeneratedKey) {
-                statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                statement = conn.prepareStatement(sqlEntity.getSql(), Statement.RETURN_GENERATED_KEYS);
             } else {
-                statement = conn.prepareStatement(sql);
+                statement = conn.prepareStatement(sqlEntity.getSql());
             }
+            List<Object> param = sqlEntity.getParam();
             if(param != null) {
                 for (int i = 0; i < param.size(); i++) {
                     statement.setObject(i + 1, param.get(i));
@@ -155,13 +162,20 @@ class QueryMapper<T> {
         return new InsertResult(0, null);
     }
 
-    Integer executeToUpdate(Connection conn, String sql, List<Object> param) {
+    Integer executeBatchToUpdate(Connection conn, String sql,List<SqlEntity> sqlEntity){
+        //todo 批量executeUpdate操作
 
-        before(sql, param);
+        return 0;
+    }
+
+    Integer executeToUpdate(Connection conn, SqlEntity sqlEntity) {
+
+        before(sqlEntity);
 
         PreparedStatement statement = null;
         try {
-            statement = conn.prepareStatement(sql);
+            statement = conn.prepareStatement(sqlEntity.getSql());
+            List<Object> param = sqlEntity.getParam();
             if(param != null) {
                 for (int i = 0; i < param.size(); i++) {
                     statement.setObject(i + 1, param.get(i));
@@ -177,7 +191,7 @@ class QueryMapper<T> {
     }
 
     public EntityMate<T> getMate() {
-        return mate;
+        return dataEntity.getEntityMate();
     }
 
     public void close(Connection conn, Statement state, ResultSet rs) {
@@ -203,13 +217,13 @@ class QueryMapper<T> {
      * @return 实体类对象
      */
     private T transform(ResultSet resultSet) {
-        Class<T> tClass = mate.getClazz();
+        Class<T> tClass = getMate().getClazz();
         T result = null;
         try {
             Constructor<T> constructor = tClass.getConstructor( null);
             result = constructor.newInstance( null);
-            EntityField id = mate.getIdEntity();
-            if(mate.isHasId()) {
+            EntityField id = getMate().getIdEntity();
+            if(getMate().isHasId()) {
                 Method idMethod = tClass.getMethod(id.getSetMethod(), id.getColumnType());
                 if (Mixorm.getInstance().getConfig().isDebug()) {
                     System.out.println("ColumnName:" + id.getColumnName() + " MethodName:" + idMethod.getName()
@@ -217,7 +231,7 @@ class QueryMapper<T> {
                 }
                 idMethod.invoke(result, resultSet.getObject(id.getColumnName()));
             }
-            Map<String, EntityField> fields = mate.getFields();
+            Map<String, EntityField> fields = getMate().getFields();
             for (String key : fields.keySet()) {
 
                 EntityField field = fields.get(key);

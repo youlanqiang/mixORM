@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 此类用来执行sql语句，并封装结果对象
@@ -24,6 +25,8 @@ class SqlExecutor<T> implements DataEntity<T> {
 
     private final EntityMate<T> entityMate;
 
+    private final AtomicBoolean isOpenTransaction = new AtomicBoolean(false);
+
     private Connection connection;
 
     private DataSource dataSource;
@@ -32,7 +35,7 @@ class SqlExecutor<T> implements DataEntity<T> {
 
     public SqlExecutor(Class<T> clazz) {
         EntityMate<T> mate = EntityMateContainer.getInstance().get(clazz);
-        this.queryMapper = new QueryMapper<>(mate);
+        this.queryMapper = new QueryMapper<>(this);
         this.entityMate = queryMapper.getMate();
     }
 
@@ -56,6 +59,12 @@ class SqlExecutor<T> implements DataEntity<T> {
     }
 
     @Override
+    public DataEntity<T> transaction() {
+        this.isOpenTransaction.set(true);
+        return this;
+    }
+
+    @Override
     public Integer insert(T entity) {
         InsertSql sqlGenerator = InsertSql.create(dataBase)
                 .insertInto(entityMate.getTableName());
@@ -69,7 +78,7 @@ class SqlExecutor<T> implements DataEntity<T> {
 
             Map<String, Object> variable = entityMate.getVariableSkipNullAndId(entity);
             sqlGenerator.fields(new ArrayList<>(variable.keySet())).values(new ArrayList<>(variable.values()));
-            result = queryMapper.insert(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams(),
+            result = queryMapper.insert(getConnection(), sqlGenerator.getSqlEntity(),
                     true, entityMate.getIdEntity().getColumnType());
 
             entityMate.autowiredKey(result.getKey(), entity);
@@ -77,7 +86,7 @@ class SqlExecutor<T> implements DataEntity<T> {
 
             Map<String, Object> variable = entityMate.getVariableSkipNull(entity);
             sqlGenerator.fields(new ArrayList<>(variable.keySet())).values(new ArrayList<>(variable.values()));
-            result = queryMapper.insert(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams(), false, null);
+            result = queryMapper.insert(getConnection(), sqlGenerator.getSqlEntity(), false, null);
 
         }
 
@@ -86,7 +95,7 @@ class SqlExecutor<T> implements DataEntity<T> {
 
     @Override
     public Integer insertBatch(List<T> entity) {
-        //批量插入记录
+        //todo 批量插入记录
         return null;
     }
 
@@ -97,7 +106,7 @@ class SqlExecutor<T> implements DataEntity<T> {
             DeleteSql sqlGenerator = DeleteSql.create(dataBase)
                     .deleteForm(entityMate.getTableName())
                     .where(ConditionSql.create(dataBase).eq(entityMate.getIdEntity().getColumnName(), id));
-            return queryMapper.executeToUpdate(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
+            return queryMapper.executeToUpdate(getConnection(), sqlGenerator.getSqlEntity());
 
         } else {
             throw new SqlGeneratorException("对象没有设置主键.");
@@ -127,7 +136,7 @@ class SqlExecutor<T> implements DataEntity<T> {
     public Integer deleteByCondition(ConditionSql sql) {
         DeleteSql sqlGenerator = DeleteSql.create(dataBase)
                 .deleteForm(entityMate.getTableName()).where(sql);
-        return queryMapper.executeToUpdate(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
+        return queryMapper.executeToUpdate(getConnection(), sqlGenerator.getSqlEntity());
     }
 
 
@@ -140,11 +149,11 @@ class SqlExecutor<T> implements DataEntity<T> {
             ConditionSql conditionSql = ConditionSql.create(dataBase);
             conditionSql.eq(entityMate.getIdEntity().getColumnName(), entityMate.getPrimaryKeyValue(entity));
 
-            Map<String, Object> variables = entityMate.getVariableSkipNullAndId(entity);
+            Map<String, Object> variables = entityMate.getVariableSkipId(entity);
             variables.forEach(sqlGenerator::set);
 
             sqlGenerator.where(conditionSql);
-            return queryMapper.executeToUpdate(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
+            return queryMapper.executeToUpdate(getConnection(), sqlGenerator.getSqlEntity());
         } else {
             throw new SqlGeneratorException("对象没有设置主键.");
         }
@@ -152,20 +161,22 @@ class SqlExecutor<T> implements DataEntity<T> {
     }
 
     @Override
-    public Integer update(T entity, ConditionSql sql) {
-        UpdateSql sqlGenerator = UpdateSql.create(dataBase)
-                .update(entityMate.getTableName());
-        Map<String, Object> variables = entityMate.getVariableSkipNull(entity);
-        variables.forEach(sqlGenerator::set);
-        sqlGenerator.where(sql);
-        return queryMapper.executeToUpdate(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
+    public Integer updateBatchById(List<T> entity) {
+        //todo 批量更新entity
+        return 0;
+
     }
 
     @Override
-    public Integer updateBatchById(List<T> entity) {
-        //todo 批量更新entity
-        return null;
+    public Integer update(T entity, ConditionSql sql) {
+        UpdateSql sqlGenerator = UpdateSql.create(dataBase)
+                .update(entityMate.getTableName());
+        Map<String, Object> variables = entityMate.getVariable(entity);
+        variables.forEach(sqlGenerator::set);
+        sqlGenerator.where(sql);
+        return queryMapper.executeToUpdate(getConnection(), sqlGenerator.getSqlEntity());
     }
+
 
     @Override
     public T selectById(Object id) {
@@ -183,7 +194,7 @@ class SqlExecutor<T> implements DataEntity<T> {
                 .select(entityMate.getFields().keySet())
                 .from(entityMate.getTableName())
                 .where(sql);
-        return queryMapper.queryToSingle(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
+        return queryMapper.queryToSingle(getConnection(), sqlGenerator.getSqlEntity());
     }
 
     @Override
@@ -192,7 +203,7 @@ class SqlExecutor<T> implements DataEntity<T> {
                 .select(" COUNT(*) ")
                 .from(entityMate.getTableName())
                 .where(sql);
-        return queryMapper.queryToInteger(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
+        return queryMapper.queryToInteger(getConnection(), sqlGenerator.getSqlEntity());
     }
 
     @Override
@@ -216,7 +227,7 @@ class SqlExecutor<T> implements DataEntity<T> {
                     .select(entityMate.getFields().keySet())
                     .from(entityMate.getTableName());
         }
-        return queryMapper.queryToList(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
+        return queryMapper.queryToList(getConnection(), sqlGenerator.getSqlEntity());
     }
 
     @Override
@@ -249,7 +260,20 @@ class SqlExecutor<T> implements DataEntity<T> {
         return pageEntity;
     }
 
+    @Override
+    public EntityMate<T> getEntityMate() {
+        return this.entityMate;
+    }
 
+    @Override
+    public Boolean isOpenTransaction() {
+        return this.isOpenTransaction.get();
+    }
+
+    @Override
+    public void closeTransaction() {
+        this.isOpenTransaction.set(false);
+    }
 
     /**
      * 这段代码的逻辑是保证 SqlGenerator，

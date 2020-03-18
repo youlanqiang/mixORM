@@ -1,5 +1,6 @@
 package top.youlanqiang.mixorm.sql.mysql;
 
+import top.youlanqiang.mixorm.domain.SqlEntity;
 import top.youlanqiang.mixorm.exceptions.SqlGeneratorException;
 import top.youlanqiang.mixorm.sql.InsertSql;
 import top.youlanqiang.mixorm.toolkit.StringUtils;
@@ -74,5 +75,10 @@ public class MysqlInsertSql implements InsertSql {
             throw new SqlGeneratorException();
         }
         return this;
+    }
+
+    @Override
+    public SqlEntity getSqlEntity() {
+        return new SqlEntity(getSql(), getParams());
     }
 }
