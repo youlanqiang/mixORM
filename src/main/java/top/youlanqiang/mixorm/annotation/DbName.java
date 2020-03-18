@@ -13,6 +13,15 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DbName {
 
-
     String value();
+
+    /**
+     * 字段自动映射
+     */
+    boolean autoMapper() default false;
+
+    /**
+     * 字段映射模式
+     */
+    MapperMode mapperMode() default MapperMode.Standard;
 }
