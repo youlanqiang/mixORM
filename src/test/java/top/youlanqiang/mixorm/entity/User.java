@@ -2,10 +2,10 @@ package top.youlanqiang.mixorm.entity;
 
 import top.youlanqiang.mixorm.annotation.DbColumn;
 import top.youlanqiang.mixorm.annotation.DbId;
-import top.youlanqiang.mixorm.annotation.DbName;
+import top.youlanqiang.mixorm.annotation.DbTable;
 import top.youlanqiang.mixorm.annotation.IdType;
 
-@DbName("user")
+@DbTable("user")
 public class User {
 
     @DbId(value = "id",type = IdType.INCREMENT)

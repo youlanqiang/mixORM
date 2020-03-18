@@ -2,7 +2,7 @@ package top.youlanqiang.mixorm.mate;
 
 import top.youlanqiang.mixorm.annotation.DbColumn;
 import top.youlanqiang.mixorm.annotation.DbId;
-import top.youlanqiang.mixorm.annotation.DbName;
+import top.youlanqiang.mixorm.annotation.DbTable;
 import top.youlanqiang.mixorm.exceptions.ParseEntityException;
 
 import java.lang.reflect.Field;
@@ -40,8 +40,8 @@ class TableAbstractClassParser<T> extends AbstractClassParser<T> {
 
     @Override
     void loadTableName(Class<T> clazz, EntityMate<T> mate) {
-        DbName dbName = clazz.getAnnotation(DbName.class);
-        mate.setTableName(dbName.value());
+        DbTable dbTable = clazz.getAnnotation(DbTable.class);
+        mate.setTableName(dbTable.value());
     }
 
     @Override
@@ -58,7 +58,7 @@ class TableAbstractClassParser<T> extends AbstractClassParser<T> {
     }
 
     private boolean needParse(Class<T> clazz){
-        return clazz.getAnnotation(DbName.class) != null;
+        return clazz.getAnnotation(DbTable.class) != null;
     }
 
     private boolean needParse(Field field) {

@@ -19,5 +19,5 @@ public @interface DbId {
      */
     IdType type() default IdType.INPUT;
 
-    String value();
+    String value() default "";
 }

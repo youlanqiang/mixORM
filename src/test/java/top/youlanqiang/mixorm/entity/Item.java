@@ -4,7 +4,7 @@ package top.youlanqiang.mixorm.entity;
 import java.io.Serializable;
 import top.youlanqiang.mixorm.annotation.DbColumn;
 import top.youlanqiang.mixorm.annotation.DbId;
-import top.youlanqiang.mixorm.annotation.DbName;
+import top.youlanqiang.mixorm.annotation.DbTable;
 import top.youlanqiang.mixorm.annotation.IdType;
 
 import java.sql.Timestamp;
@@ -16,7 +16,7 @@ import java.util.Date;
  * @Date 2020-03-17
  */
 
-@DbName(  "quotation_rule" )
+@DbTable( "quotation_rule" )
 public class Item  implements Serializable {
 
     private static final long serialVersionUID =  7314058416400857248L;

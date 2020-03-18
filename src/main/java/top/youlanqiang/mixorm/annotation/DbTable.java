@@ -11,9 +11,12 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DbName {
+public @interface DbTable {
 
-    String value();
+    /**
+     * 如果使用默认名称，那么UserItem类会映射为user_item
+     */
+    String value() default "";
 
     /**
      * 字段自动映射
