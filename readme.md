@@ -11,9 +11,10 @@ mixORM是为了解决我在工作中遇到问题所编写的一种无规范，0�
 * [ ] 扩展支持
 
 ## database support
-* [x] mysql5.7及以上
-* [ ] oracle
-* [ ] Postgre SQL
+* [x] MySQL5.7及以上
+* [ ] Oracle11及以上
+* [ ] PostgreSQL10.12及以上
+* [ ] SqlServer2012及以上
 
 
 > write by youlanqiang

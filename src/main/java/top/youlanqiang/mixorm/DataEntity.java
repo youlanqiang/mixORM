@@ -39,6 +39,14 @@ public interface DataEntity<T> {
      */
     Integer insert(T entity);
 
+
+    /**
+     * 批量插入记录
+     * @param entity 实体对象
+     * @return 插入成功记录数
+     */
+    Integer insertBatch(List<T> entity);
+
     /**
      * 根据ID删除
      * @param id 主键ID
@@ -81,6 +89,13 @@ public interface DataEntity<T> {
      * @return 修改成功记录数
      */
     Integer update(T entity, ConditionSql sql);
+
+    /**
+     * 批量更新
+     * @param entity 实体对象
+     * @return 修改成功记录数
+     */
+    Integer updateBatchById(List<T> entity);
 
     /**
      * 根据ID查询

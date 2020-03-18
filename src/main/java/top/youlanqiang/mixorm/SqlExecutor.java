@@ -85,6 +85,12 @@ class SqlExecutor<T> implements DataEntity<T> {
     }
 
     @Override
+    public Integer insertBatch(List<T> entity) {
+        //批量插入记录
+        return null;
+    }
+
+    @Override
     public Integer deleteById(Object id) {
         if (entityMate.isHasId()) {
 
@@ -153,6 +159,12 @@ class SqlExecutor<T> implements DataEntity<T> {
         variables.forEach(sqlGenerator::set);
         sqlGenerator.where(sql);
         return queryMapper.executeToUpdate(getConnection(), sqlGenerator.getSql(), sqlGenerator.getParams());
+    }
+
+    @Override
+    public Integer updateBatchById(List<T> entity) {
+        //todo 批量更新entity
+        return null;
     }
 
     @Override
