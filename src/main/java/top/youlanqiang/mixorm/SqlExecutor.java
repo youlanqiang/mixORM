@@ -41,21 +41,27 @@ class SqlExecutor<T> implements DataEntity<T> {
     }
 
     @Override
-    public DataEntity<T> source(DataSource dataSource) throws SQLException {
+    public DataEntity<T> source(DataSource dataSource)  {
         this.dataSource = dataSource;
         //获取数据库厂商名称
         try(Connection connection = dataSource.getConnection()){
             this.dataBase = DataBase.valueOf(connection.getMetaData().getDatabaseProductName());
+        } catch (SQLException e) {
+            throw new RuntimeException("获取数据库类型错误.");
         }
         return this;
     }
 
 
     @Override
-    public DataEntity<T> use(Connection connection) throws SQLException {
+    public DataEntity<T> use(Connection connection)  {
         this.connection = connection;
         //获取数据库厂商名称
-        this.dataBase = DataBase.valueOf(connection.getMetaData().getDatabaseProductName());
+        try {
+            this.dataBase = DataBase.valueOf(connection.getMetaData().getDatabaseProductName());
+        } catch (SQLException e) {
+            throw new RuntimeException("获取数据类型错误.");
+        }
         return this;
     }
 
@@ -299,8 +305,17 @@ class SqlExecutor<T> implements DataEntity<T> {
     }
 
     @Override
-    public void closeTransaction() {
+    public void closeTransaction()  {
         this.isOpenTransaction.set(false);
+        if(connection != null){
+            try {
+                connection.setAutoCommit(true);
+                connection.commit();
+                connection.close();
+            }catch(SQLException e){
+                throw new RuntimeException("关闭事务失败.");
+            }
+        }
     }
 
     /**
@@ -323,16 +338,34 @@ class SqlExecutor<T> implements DataEntity<T> {
 
 
     private Connection getConnection() {
+        Connection conn = null;
         if (connection != null) {
-            return connection;
+            conn =  connection;
         }
         if (dataSource != null) {
             try {
-                return dataSource.getConnection();
+                connection = dataSource.getConnection();
+                conn = connection;
             } catch (SQLException e) {
-                throw new RuntimeException("DB Connection has had Exception");
+                throw new RuntimeException("数据库连接出错.");
             }
         }
-        throw new RuntimeException("DB Connection has had Exception");
+
+        if(conn == null){
+            throw new RuntimeException("DB Connection has had Exception");
+        }
+
+        if(isOpenTransaction.get()){
+            try {
+                conn.setAutoCommit(false);
+                return conn;
+            } catch (SQLException e) {
+                throw new RuntimeException("数据库连接出错.");
+            }
+
+        }else{
+            return conn;
+        }
+
     }
 }

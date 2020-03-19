@@ -43,7 +43,30 @@ class QueryMapper<T> {
         }
     }
 
+    private void after(Connection conn, Statement state, ResultSet rs){
+        if(dataEntity.isOpenTransaction()){
+            try {
+                conn.commit();
+            } catch (SQLException e) {
+                throw new RuntimeException("事务提交失败.");
+            }
+        }else {
+            close(conn, state, rs);
+        }
+    }
 
+
+    private void catchError(Connection conn, SQLException exception){
+        if(dataEntity.isOpenTransaction()){
+            try {
+                conn.rollback();
+            } catch (SQLException e) {
+                throw new RuntimeException("事务回滚失败.");
+            }
+        }else{
+            throw new RuntimeException(exception);
+        }
+    }
 
     List<T> queryToList(Connection conn, SqlEntity sqlEntity) {
 
@@ -66,9 +89,9 @@ class QueryMapper<T> {
                 list.add(t);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            catchError(conn, e);
         } finally {
-            close(conn, statement, resultSet);
+            after(conn, statement, resultSet);
         }
         return list;
     }
@@ -94,9 +117,9 @@ class QueryMapper<T> {
                 t = transform(resultSet);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            catchError(conn, e);
         } finally {
-            close(conn, statement, resultSet);
+            after(conn, statement, resultSet);
         }
         return t;
     }
@@ -124,9 +147,9 @@ class QueryMapper<T> {
             }
         } catch (SQLException e) {
 
-            e.printStackTrace();
+            catchError(conn, e);
         } finally {
-            close(conn, statement, resultSet);
+            after(conn, statement, resultSet);
         }
         return t;
     }
@@ -164,9 +187,9 @@ class QueryMapper<T> {
             return new InsertResult(count, null);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            catchError(conn, e);
         } finally {
-            close(conn, statement, resultSet);
+            after(conn, statement, resultSet);
         }
         return new InsertResult(0, null);
     }
@@ -196,9 +219,9 @@ class QueryMapper<T> {
             }
             return result;
         }catch(SQLException e){
-            e.printStackTrace();
+            catchError(conn, e);
         }finally{
-            close(conn, statement, null);
+            after(conn, statement, null);
         }
         return 0L;
     }
@@ -218,9 +241,9 @@ class QueryMapper<T> {
             }
             return statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            catchError(conn, e);
         } finally {
-            close(conn, statement, null);
+            after(conn, statement, null);
         }
         return 0;
     }
@@ -241,7 +264,7 @@ class QueryMapper<T> {
                 conn.close();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("数据库连接关闭出错.");
         }
     }
 

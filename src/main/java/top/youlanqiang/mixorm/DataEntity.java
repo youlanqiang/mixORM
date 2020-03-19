@@ -22,7 +22,7 @@ public interface DataEntity<T> {
      * @return dataEntity
      * @throws SQLException dataSource获取Connection异常
      */
-    DataEntity<T> source(DataSource dataSource) throws SQLException;
+    DataEntity<T> source(DataSource dataSource);
 
     /**
      * 单独使用一个数据库连接，在使用完后续方法后
@@ -31,7 +31,7 @@ public interface DataEntity<T> {
      * @return dataEntity对象
      * @throws SQLException Connection异常
      */
-    DataEntity<T> use(Connection connection) throws SQLException;
+    DataEntity<T> use(Connection connection) ;
 
 
     /**
@@ -174,6 +174,6 @@ public interface DataEntity<T> {
     /**
      * 关闭事物
      */
-    void closeTransaction();
+    void closeTransaction() ;
 
 }
