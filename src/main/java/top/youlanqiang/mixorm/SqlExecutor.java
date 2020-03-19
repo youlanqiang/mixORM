@@ -1,6 +1,7 @@
 package top.youlanqiang.mixorm;
 
 import top.youlanqiang.mixorm.annotation.IdType;
+import top.youlanqiang.mixorm.domain.BatchSqlEntity;
 import top.youlanqiang.mixorm.domain.PageEntity;
 import top.youlanqiang.mixorm.domain.SimplePageEntity;
 import top.youlanqiang.mixorm.exceptions.SqlGeneratorException;
@@ -73,7 +74,7 @@ class SqlExecutor<T> implements DataEntity<T> {
 
         QueryMapper.InsertResult result = null;
 
-        if(entityMate.isHasId() && entityMate.getIdEntity().getIdType() == IdType.INCREMENT){
+        if(entityMate.hasId() && entityMate.getIdEntity().getIdType() == IdType.INCREMENT){
             //存在自增主键，则在插入字段中不包含主键
 
             Map<String, Object> variable = entityMate.getVariableSkipNullAndId(entity);
@@ -94,14 +95,25 @@ class SqlExecutor<T> implements DataEntity<T> {
     }
 
     @Override
-    public Integer insertBatch(List<T> entity) {
+    public Long insertBatch(List<T> entity) {
         //todo 批量插入记录
-        return null;
+        InsertSql sqlGenerator = InsertSql.create(dataBase)
+                .insertInto(entityMate.getTableName()).fields(new ArrayList<>(entityMate.getFields().keySet()));
+        BatchSqlEntity  sqlEntity = new BatchSqlEntity();
+        sqlEntity.setSql(sqlGenerator.getSql());
+
+        List<List<Object>> params = new ArrayList<>();
+        for (T t : entity) {
+            List<Object> item = new ArrayList<>(entityMate.getVariableSkipId(t).values());
+            params.add(item);
+        }
+        sqlEntity.setRows(params);
+        return queryMapper.executeBatchToUpdate(getConnection(), sqlEntity);
     }
 
     @Override
     public Integer deleteById(Object id) {
-        if (entityMate.isHasId()) {
+        if (entityMate.hasId()) {
 
             DeleteSql sqlGenerator = DeleteSql.create(dataBase)
                     .deleteForm(entityMate.getTableName())
@@ -123,7 +135,7 @@ class SqlExecutor<T> implements DataEntity<T> {
 
     @Override
     public Integer deleteBatchIds(List<Object> idList) {
-        if (entityMate.isHasId()) {
+        if (entityMate.hasId()) {
             ConditionSql condition = ConditionSql.create(dataBase)
                     .in(entityMate.getIdEntity().getColumnName(), idList);
             return deleteByCondition(condition);
@@ -142,7 +154,7 @@ class SqlExecutor<T> implements DataEntity<T> {
 
     @Override
     public Integer updateById(T entity) {
-        if (entityMate.isHasId()) {
+        if (entityMate.hasId()) {
             UpdateSql sqlGenerator = UpdateSql.create(dataBase)
                     .update(entityMate.getTableName());
 
@@ -161,10 +173,26 @@ class SqlExecutor<T> implements DataEntity<T> {
     }
 
     @Override
-    public Integer updateBatchById(List<T> entity) {
-        //todo 批量更新entity
-        return 0;
-
+    public Long updateBatchById(List<T> entity) {
+        if(entityMate.hasId()){
+            UpdateSql sqlGenerator = UpdateSql.create(dataBase)
+                    .update(entityMate.getTableName());
+            Set<String> columns = entityMate.getFields().keySet();
+            for (String column : columns) {
+                sqlGenerator.set(column, null);
+            }
+            BatchSqlEntity sqlEntity = new BatchSqlEntity();
+            sqlEntity.setSql(sqlGenerator.getSql());
+            List<List<Object>> params = new ArrayList<>();
+            for (T t : entity) {
+                List<Object> item = new ArrayList<>(entityMate.getVariableSkipId(t).values());
+                params.add(item);
+            }
+            sqlEntity.setRows(params);
+            return queryMapper.executeBatchToUpdate(getConnection(), sqlEntity);
+        }else{
+            throw new SqlGeneratorException("对象没有设置主键.");
+        }
     }
 
     @Override
@@ -180,7 +208,7 @@ class SqlExecutor<T> implements DataEntity<T> {
 
     @Override
     public T selectById(Object id) {
-        if (entityMate.isHasId()) {
+        if (entityMate.hasId()) {
             ConditionSql condition = ConditionSql.create(dataBase).eq(entityMate.getIdEntity().getColumnName(), id);
             return selectOne(condition);
         } else {

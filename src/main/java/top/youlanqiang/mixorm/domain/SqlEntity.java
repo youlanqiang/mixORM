@@ -14,13 +14,15 @@ public class SqlEntity {
 
     private String sql;
 
-    private List<Object> param;
+    private List<Object> params;
 
     private static final List<Object> EMPTY = new ArrayList<>(0);
 
-    public SqlEntity(String sql, List<Object> param) {
+    public SqlEntity(){}
+
+    public SqlEntity(String sql, List<Object> params) {
         this.sql = sql;
-        this.param = param;
+        this.params = params;
     }
 
     public String getSql() {
@@ -34,14 +36,14 @@ public class SqlEntity {
         this.sql = sql;
     }
 
-    public List<Object> getParam() {
-        if(param == null){
+    public List<Object> getParams() {
+        if(params == null){
             return EMPTY;
         }
-        return param;
+        return params;
     }
 
-    public void setParam(List<Object> param) {
-        this.param = param;
+    public void setParams(List<Object> params) {
+        this.params = params;
     }
 }

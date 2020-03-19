@@ -1,9 +1,11 @@
 package top.youlanqiang.mixorm;
 
 
+import top.youlanqiang.mixorm.domain.BatchSqlEntity;
 import top.youlanqiang.mixorm.domain.SqlEntity;
 import top.youlanqiang.mixorm.mate.EntityField;
 import top.youlanqiang.mixorm.mate.EntityMate;
+import top.youlanqiang.mixorm.toolkit.NumberUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -29,11 +31,18 @@ class QueryMapper<T> {
     private void before(SqlEntity sqlEntity){
         if(Mixorm.getInstance().getConfig().isDebug()){
             System.out.println("SQL:" + sqlEntity.getSql());
-            if(sqlEntity.getParam() != null) {
-                System.out.println("PARAMS:" + sqlEntity.getParam().toString());
+            if(sqlEntity.getParams() != null) {
+                System.out.println("PARAMS:" + sqlEntity.getParams().toString());
             }
         }
     }
+
+    private void before(BatchSqlEntity sqlEntity){
+        if(Mixorm.getInstance().getConfig().isDebug()){
+            System.out.println("SQL:" + sqlEntity.getSql());
+        }
+    }
+
 
 
     List<T> queryToList(Connection conn, SqlEntity sqlEntity) {
@@ -45,7 +54,7 @@ class QueryMapper<T> {
         List<T> list = new ArrayList<>();
         try {
             statement = conn.prepareStatement(sqlEntity.getSql());
-            List<Object> param = sqlEntity.getParam();
+            List<Object> param = sqlEntity.getParams();
             if(param != null) {
                 for (int i = 0; i < param.size(); i++) {
                     statement.setObject(i + 1, param.get(i));
@@ -74,7 +83,7 @@ class QueryMapper<T> {
         T t = null;
         try {
             statement = conn.prepareStatement(sqlEntity.getSql());
-            List<Object> param = sqlEntity.getParam();
+            List<Object> param = sqlEntity.getParams();
             if(param != null) {
                 for (int i = 0; i < param.size(); i++) {
                     statement.setObject(i + 1, param.get(i));
@@ -103,7 +112,7 @@ class QueryMapper<T> {
         try {
 
             statement = conn.prepareStatement(sqlEntity.getSql());
-            List<Object> param = sqlEntity.getParam();
+            List<Object> param = sqlEntity.getParams();
             if (param != null) {
                 for (int i = 0; i < param.size(); i++) {
                     statement.setObject(i + 1, param.get(i));
@@ -138,7 +147,7 @@ class QueryMapper<T> {
             } else {
                 statement = conn.prepareStatement(sqlEntity.getSql());
             }
-            List<Object> param = sqlEntity.getParam();
+            List<Object> param = sqlEntity.getParams();
             if(param != null) {
                 for (int i = 0; i < param.size(); i++) {
                     statement.setObject(i + 1, param.get(i));
@@ -162,10 +171,36 @@ class QueryMapper<T> {
         return new InsertResult(0, null);
     }
 
-    Integer executeBatchToUpdate(Connection conn, String sql,List<SqlEntity> sqlEntity){
-        //todo 批量executeUpdate操作
 
-        return 0;
+    Long executeBatchToUpdate(Connection conn, BatchSqlEntity sqlEntity){
+        before(sqlEntity);
+
+        PreparedStatement statement = null;
+        try{
+            int count = 0;
+            long result = 0;
+            statement = conn.prepareStatement(sqlEntity.getSql());
+            List<List<Object>> rows = sqlEntity.getRows();
+            for (List<Object> params : rows) {
+                if(params != null) {
+                    for (int i = 0; i < params.size(); i++) {
+                        statement.setObject(i + 1, params.get(i));
+                    }
+                    statement.addBatch();
+                    count ++;
+                }
+                if(count % 500 == 0){
+                    result += NumberUtils.arraySum(statement.executeBatch());
+                    statement.clearBatch();
+                }
+            }
+            return result;
+        }catch(SQLException e){
+            e.printStackTrace();
+        }finally{
+            close(conn, statement, null);
+        }
+        return 0L;
     }
 
     Integer executeToUpdate(Connection conn, SqlEntity sqlEntity) {
@@ -175,10 +210,10 @@ class QueryMapper<T> {
         PreparedStatement statement = null;
         try {
             statement = conn.prepareStatement(sqlEntity.getSql());
-            List<Object> param = sqlEntity.getParam();
-            if(param != null) {
-                for (int i = 0; i < param.size(); i++) {
-                    statement.setObject(i + 1, param.get(i));
+            List<Object> params = sqlEntity.getParams();
+            if(params != null) {
+                for (int i = 0; i < params.size(); i++) {
+                    statement.setObject(i + 1, params.get(i));
                 }
             }
             return statement.executeUpdate();
@@ -223,7 +258,7 @@ class QueryMapper<T> {
             Constructor<T> constructor = tClass.getConstructor( null);
             result = constructor.newInstance( null);
             EntityField id = getMate().getIdEntity();
-            if(getMate().isHasId()) {
+            if(getMate().hasId()) {
                 Method idMethod = tClass.getMethod(id.getSetMethod(), id.getColumnType());
                 if (Mixorm.getInstance().getConfig().isDebug()) {
                     System.out.println("ColumnName:" + id.getColumnName() + " MethodName:" + idMethod.getName()

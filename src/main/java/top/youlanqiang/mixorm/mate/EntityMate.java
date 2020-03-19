@@ -171,7 +171,7 @@ public class EntityMate<T> {
         this.tableName = tableName;
     }
 
-    public boolean isHasId() {
+    public boolean hasId() {
         return hasId;
     }
 
@@ -179,10 +179,18 @@ public class EntityMate<T> {
         this.hasId = hasId;
     }
 
+    /**
+     * 数据库字段名称为key,不包含主键EntityField
+     * @return 字段数组
+     */
     public Map<String, EntityField> getFields() {
         return fields;
     }
 
+    /**
+     * 数据库字段名称为key,不包含主键EntityField
+     * @param fields 字段数组
+     */
     void setFields(Map<String, EntityField> fields) {
         this.fields = fields;
     }

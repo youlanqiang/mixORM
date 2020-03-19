@@ -53,7 +53,7 @@ public interface DataEntity<T> {
      * @param entity 实体对象
      * @return 插入成功记录数
      */
-    Integer insertBatch(List<T> entity);
+    Long insertBatch(List<T> entity);
 
     /**
      * 根据ID删除
@@ -103,7 +103,7 @@ public interface DataEntity<T> {
      * @param entity 实体对象
      * @return 修改成功记录数
      */
-    Integer updateBatchById(List<T> entity);
+    Long updateBatchById(List<T> entity);
 
     /**
      * 根据ID查询

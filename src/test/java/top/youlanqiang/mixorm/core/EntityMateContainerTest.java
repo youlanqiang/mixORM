@@ -25,7 +25,7 @@ public class EntityMateContainerTest {
         EntityMate<User> mate = container.get(User.class);
         Assertions.assertAll(
                 () -> Assertions.assertEquals(mate.getClazz(), User.class),
-                () -> Assertions.assertTrue(mate.isHasId()),
+                () -> Assertions.assertTrue(mate.hasId()),
                 () -> Assertions.assertEquals(mate.getTableName(), "user"));
     }
 
