@@ -159,6 +159,16 @@ public interface DataEntity<T> {
     PageEntity<T> selectPage(int current, int size, ConditionSql sql);
 
 
+
+    /**
+     * 直接执行sql语句
+     * @param sql sql语句
+     * @param params params字段
+     * @return 0/1
+     */
+    Integer execute(String sql, List<Object> params);
+
+
     /**
      * 获取对象元数据
      * @return EntityMate

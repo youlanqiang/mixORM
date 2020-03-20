@@ -4,6 +4,7 @@ import top.youlanqiang.mixorm.annotation.IdType;
 import top.youlanqiang.mixorm.domain.BatchSqlEntity;
 import top.youlanqiang.mixorm.domain.PageEntity;
 import top.youlanqiang.mixorm.domain.SimplePageEntity;
+import top.youlanqiang.mixorm.domain.SqlEntity;
 import top.youlanqiang.mixorm.exceptions.SqlGeneratorException;
 import top.youlanqiang.mixorm.mate.EntityMate;
 import top.youlanqiang.mixorm.mate.EntityMateContainer;
@@ -292,6 +293,11 @@ class SqlExecutor<T> implements DataEntity<T> {
         List<T> list = selectList(sql);
         pageEntity.setList(list);
         return pageEntity;
+    }
+
+    @Override
+    public Integer execute(String sql, List<Object> params) {
+        return queryMapper.executeToUpdate(getConnection(), new SqlEntity(sql, params));
     }
 
     @Override
