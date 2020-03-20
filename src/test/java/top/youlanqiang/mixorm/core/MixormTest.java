@@ -43,12 +43,8 @@ public class MixormTest {
     @DisplayName("测试Item长表查询")
     public void selectItem(){
         DataEntity<Item> entity =  mixorm.create(Item.class);
-        try {
-            List<Item> items = entity.use(connection).selectList(null);
-            System.out.println(items.size());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        List<Item> items = entity.use(connection).selectList(null);
+        System.out.println(items.size());
     }
 
     @Test

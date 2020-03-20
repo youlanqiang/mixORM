@@ -37,8 +37,8 @@ class SqlExecutor<T> implements DataEntity<T> {
 
     public SqlExecutor(Class<T> clazz) {
         EntityMate<T> mate = EntityMateContainer.getInstance().get(clazz);
-        this.queryMapper = new QueryMapper<>(this);
-        this.entityMate = queryMapper.getMate();
+        this.entityMate = mate;
+        this.queryMapper = new QueryMapper<>(this);;
     }
 
     @Override
