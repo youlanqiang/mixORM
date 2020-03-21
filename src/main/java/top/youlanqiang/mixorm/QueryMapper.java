@@ -3,17 +3,13 @@ package top.youlanqiang.mixorm;
 
 import top.youlanqiang.mixorm.domain.BatchSqlEntity;
 import top.youlanqiang.mixorm.domain.SqlEntity;
-import top.youlanqiang.mixorm.mate.EntityField;
-import top.youlanqiang.mixorm.mate.EntityMate;
 import top.youlanqiang.mixorm.toolkit.NumberUtils;
+import top.youlanqiang.mixorm.transform.Transformer;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
 
 /**
  * @author youlanqiang
@@ -23,8 +19,11 @@ class QueryMapper<T> {
 
     private final DataEntity<T> dataEntity;
 
+    private final Transformer<T> transformer;
+
     public QueryMapper(DataEntity<T> dataEntity) {
         this.dataEntity = dataEntity;
+        this.transformer = new Transformer<>(dataEntity.getEntityMate());
     }
 
 
@@ -85,7 +84,7 @@ class QueryMapper<T> {
             }
             resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                T t = transform(resultSet);
+                T t = transformer.transform(resultSet);
                 list.add(t);
             }
         } catch (SQLException e) {
@@ -114,7 +113,7 @@ class QueryMapper<T> {
             }
             resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                t = transform(resultSet);
+                t = transformer.transform(resultSet);
             }
         } catch (SQLException e) {
             catchError(conn, e);
@@ -248,9 +247,7 @@ class QueryMapper<T> {
         return 0;
     }
 
-    public EntityMate<T> getMate() {
-        return dataEntity.getEntityMate();
-    }
+
 
     public void close(Connection conn, Statement state, ResultSet rs) {
         try {
@@ -268,46 +265,6 @@ class QueryMapper<T> {
         }
     }
 
-    /**
-     * 根据数据库查询结果集构造一个实体类对象
-     *
-     * @param resultSet 数据库结果集
-     * @return 实体类对象
-     */
-    private T transform(ResultSet resultSet) {
-        Class<T> tClass = getMate().getClazz();
-        T result = null;
-        try {
-            Constructor<T> constructor = tClass.getConstructor( null);
-            result = constructor.newInstance( null);
-            EntityField id = getMate().getIdEntity();
-            if(getMate().hasId()) {
-                Method idMethod = tClass.getMethod(id.getSetMethod(), id.getColumnType());
-                if (Mixorm.getInstance().getConfig().isDebug()) {
-                    System.out.println("ColumnName:" + id.getColumnName() + " MethodName:" + idMethod.getName()
-                            + " ClassType:" + resultSet.getObject(id.getColumnName()).getClass().getName());
-                }
-                idMethod.invoke(result, resultSet.getObject(id.getColumnName()));
-            }
-            Map<String, EntityField> fields = getMate().getFields();
-            for (String key : fields.keySet()) {
-
-                EntityField field = fields.get(key);
-                Method method = tClass.getMethod(field.getSetMethod(), field.getColumnType());
-                if(resultSet.getObject(field.getColumnName()) != null) {
-                    if (Mixorm.getInstance().getConfig().isDebug()) {
-                        System.out.println("ColumnName:" + field.getColumnName() + " MethodName:" + method.getName()
-                                + " ClassType:" + resultSet.getObject(field.getColumnName()).getClass().getName());
-                    }
-                    method.invoke(result, resultSet.getObject(field.getColumnName()));
-                }
-            }
-
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | SQLException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
 
 
     static class InsertResult {
