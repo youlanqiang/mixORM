@@ -130,6 +130,7 @@ public class EntityMate<T> {
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
+            variable.put(field.getColumnName(), value);
         }
         return variable;
     }
@@ -151,6 +152,7 @@ public class EntityMate<T> {
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
+            variable.put(field.getColumnName(), value);
         }
         return variable;
     }
