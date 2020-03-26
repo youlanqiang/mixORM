@@ -49,7 +49,7 @@ class QueryMapper<T> {
             } catch (SQLException e) {
                 throw new RuntimeException("事务提交失败.");
             }
-        }else {
+        }else if(dataEntity.isAutoClose()) {
             close(conn, state, rs);
         }
     }

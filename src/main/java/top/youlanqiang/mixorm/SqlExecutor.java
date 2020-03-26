@@ -29,6 +29,8 @@ class SqlExecutor<T> implements DataEntity<T> {
 
     private final AtomicBoolean isOpenTransaction = new AtomicBoolean(false);
 
+    private final AtomicBoolean isAutoClose = new AtomicBoolean(true);
+
     private Connection connection;
 
     private DataSource dataSource;
@@ -66,11 +68,6 @@ class SqlExecutor<T> implements DataEntity<T> {
         return this;
     }
 
-    @Override
-    public DataEntity<T> transaction() {
-        this.isOpenTransaction.set(true);
-        return this;
-    }
 
     @Override
     public Integer insert(T entity) {
@@ -306,6 +303,12 @@ class SqlExecutor<T> implements DataEntity<T> {
     }
 
     @Override
+    public DataEntity<T> transaction() {
+        this.isOpenTransaction.set(true);
+        return this;
+    }
+
+    @Override
     public Boolean isOpenTransaction() {
         return this.isOpenTransaction.get();
     }
@@ -320,6 +323,30 @@ class SqlExecutor<T> implements DataEntity<T> {
                 connection.close();
             }catch(SQLException e){
                 throw new RuntimeException("关闭事务失败.");
+            }
+        }
+    }
+
+    @Override
+    public DataEntity<T> autoClose(boolean auto) {
+        this.isAutoClose.set(auto);
+        return this;
+    }
+
+    @Override
+    public Boolean isAutoClose() {
+        return this.isAutoClose.get();
+    }
+
+    @Override
+    public void closeConn() {
+        if(!this.isAutoClose.get()){
+            if(connection != null){
+                try {
+                    connection.close();
+                }catch(SQLException e){
+                    throw new RuntimeException("关闭SQL Connection失败.");
+                }
             }
         }
     }

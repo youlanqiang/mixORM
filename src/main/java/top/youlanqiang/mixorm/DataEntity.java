@@ -34,11 +34,6 @@ public interface DataEntity<T> {
     DataEntity<T> use(Connection connection) ;
 
 
-    /**
-     * DataEntity将会在下一次操作中开启事物支持
-     * @return dataEntity对象
-     */
-    DataEntity<T> transaction();
 
     /**
      * 插入一条记录
@@ -176,6 +171,12 @@ public interface DataEntity<T> {
     EntityMate<T> getEntityMate();
 
     /**
+     * DataEntity将会在下一次操作中开启事物支持
+     * @return dataEntity对象
+     */
+    DataEntity<T> transaction();
+
+    /**
      * 下次操作是否支持事物
      * @return true/false
      */
@@ -185,5 +186,21 @@ public interface DataEntity<T> {
      * 关闭事物
      */
     void closeTransaction() ;
+
+    /**
+     * 自动关闭连接
+     */
+    DataEntity<T> autoClose(boolean auto);
+
+    /**
+     * 是否自动关闭连接
+     * @return true/false
+     */
+    Boolean isAutoClose();
+
+    /**
+     * 关闭连接
+     */
+    void closeConn();
 
 }
