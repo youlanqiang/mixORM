@@ -9,9 +9,9 @@ import top.youlanqiang.mixorm.annotation.IdType;
 public class User {
 
     @DbId(value = "id",type = IdType.INCREMENT)
-    private int id;
+    private long id;
 
-    @DbColumn("name")
+    @DbColumn("username")
     private String name;
 
     @DbColumn("email")
@@ -20,11 +20,11 @@ public class User {
     @DbColumn("age")
     private int age;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

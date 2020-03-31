@@ -25,7 +25,7 @@ public class MixormTest {
 
     private static Mixorm mixorm;
 
-    private static final String url = "jdbc:mysql://192.168.43.202:3306/cloudhome?relaxAutoCommit=true&zeroDateTimeBehavior=convertToNull&characterEncoding=utf8&serverTimezone=Asia/Shanghai";
+    private static final String url = "jdbc:mysql://localhost:3306/cloudhome?relaxAutoCommit=true&zeroDateTimeBehavior=convertToNull&characterEncoding=utf8&serverTimezone=Asia/Shanghai";
     private static final String driver = "com.mysql.cj.jdbc.Driver";
     private static final String username = "root";
     private static final String password = "ybzj";

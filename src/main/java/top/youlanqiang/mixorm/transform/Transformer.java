@@ -34,17 +34,10 @@ public class Transformer<T> {
         Class<T> tClass = entityMate.getClazz();
         T result = null;
         try {
+
             Constructor<T> constructor = tClass.getConstructor( null);
             result = constructor.newInstance( null);
-            EntityField id = entityMate.getIdEntity();
-            if(entityMate.hasId()) {
-                Method idMethod = tClass.getMethod(id.getSetMethod(), id.getColumnType());
-                if (Mixorm.getInstance().getConfig().isDebug()) {
-                    System.out.println("ColumnName:" + id.getColumnName() + " MethodName:" + idMethod.getName()
-                            + " ClassType:" + resultSet.getObject(id.getColumnName()).getClass().getName());
-                }
-                idMethod.invoke(result, resultSet.getObject(id.getColumnName()));
-            }
+
             Map<String, EntityField> fields = entityMate.getFields();
             for (String key : fields.keySet()) {
 
@@ -52,7 +45,7 @@ public class Transformer<T> {
                 Method method = tClass.getMethod(field.getSetMethod(), field.getColumnType());
                 if(resultSet.getObject(field.getColumnName()) != null) {
                     if (Mixorm.getInstance().getConfig().isDebug()) {
-                        System.out.println("ColumnName:" + field.getColumnName() + " MethodName:" + method.getName()
+                        System.out.println("VColumnName:" + field.getColumnName() + " MethodName:" + method.getName()
                                 + " ClassType:" + resultSet.getObject(field.getColumnName()).getClass().getName());
                     }
                     method.invoke(result, resultSet.getObject(field.getColumnName()));

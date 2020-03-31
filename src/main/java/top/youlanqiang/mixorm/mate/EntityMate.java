@@ -182,7 +182,7 @@ public class EntityMate<T> {
     }
 
     /**
-     * 数据库字段名称为key,不包含主键EntityField
+     * 数据库字段名称为key,含主键EntityField
      * @return 字段数组
      */
     public Map<String, EntityField> getFields() {
@@ -190,7 +190,7 @@ public class EntityMate<T> {
     }
 
     /**
-     * 数据库字段名称为key,不包含主键EntityField
+     * 数据库字段名称为key,含主键EntityField
      * @param fields 字段数组
      */
     void setFields(Map<String, EntityField> fields) {
