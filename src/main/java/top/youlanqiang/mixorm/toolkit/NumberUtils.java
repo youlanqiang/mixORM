@@ -5,6 +5,8 @@ package top.youlanqiang.mixorm.toolkit;
  */
 public final class NumberUtils {
 
+    private NumberUtils(){ }
+
     /**
      * 数组求和
      * @param array 数组

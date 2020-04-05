@@ -8,6 +8,8 @@ import java.util.Iterator;
  */
 public final class StringUtils {
 
+    private StringUtils(){}
+
     public static String foreach(String open, String close, String separator, Collection collection){
         StringBuilder str = new StringBuilder(open);
         Iterator iterator = collection.iterator();
