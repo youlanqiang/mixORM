@@ -263,32 +263,37 @@ class SqlExecutor<T> implements DataEntity<T> {
     }
 
     @Override
-    public PageEntity<T> selectPage(int current, int size) {
-        PageEntity<T> pageEntity = new SimplePageEntity<>(current, size);
+    public synchronized PageEntity<T>  selectPage(int current, int size) {
+        this.isAutoClose.set(false);
 
+        PageEntity<T> pageEntity = new SimplePageEntity<>(current, size);
         Integer count = selectCount(null);
         pageEntity.setTotal(count);
-
-        ConditionSql condition = ConditionSql.create(dataBase)
+        ConditionSql condition = ConditionSql.create(dataBase).eq("1","1")
                 .limit( (current - 1) * size, size);
         List<T> list = selectList(condition);
         pageEntity.setList(list);
+
+        this.closeConn();
+        this.isAutoClose.set(true);
+
         return pageEntity;
     }
 
     @Override
-    public PageEntity<T> selectPage(int current, int size, ConditionSql sql) {
+    public synchronized PageEntity<T> selectPage(int current, int size, ConditionSql sql) {
+        this.isAutoClose.set(false);
         PageEntity<T> pageEntity = new SimplePageEntity<>(current, size);
-
         Integer count = selectCount(sql);
         pageEntity.setTotal(count);
-
         if(sql == null){
             throw new SqlGeneratorException();
         }
         sql.limit((current - 1) * size, size);
         List<T> list = selectList(sql);
         pageEntity.setList(list);
+        this.closeConn();
+        this.isAutoClose.set(true);
         return pageEntity;
     }
 
