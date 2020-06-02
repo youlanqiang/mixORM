@@ -6,7 +6,7 @@ import top.youlanqiang.mixorm.annotation.DbTable;
 import top.youlanqiang.mixorm.exceptions.ParseEntityException;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 class TableAbstractClassParser<T> extends AbstractClassParser<T> {
@@ -26,7 +26,7 @@ class TableAbstractClassParser<T> extends AbstractClassParser<T> {
     @Override
     void loadFields(Class<T> clazz, EntityMate<T> mate) {
         Field[] fields = clazz.getDeclaredFields();
-        Map<String, EntityField> map = new HashMap<>(fields.length);
+        Map<String, EntityField> map = new LinkedHashMap<>(fields.length);
         for(Field field : fields){
             if(needParse(field)){
                 AbstractFieldParser parser = new TableAbstractFieldParser(field);
